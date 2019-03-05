@@ -4,7 +4,7 @@ session_start();
 
 // Check if the user is already logged in, if yes then redirect him to welcome page
 if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true){
-  header("location: welcome.php");
+  header("location: home.php");
   exit;
 }
 
@@ -64,7 +64,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                             $_SESSION["username"] = $username;
 
                             // Redirect user to welcome page
-                            header("location: welcome.php");
+                            header("location: home.php");
                         } else{
                             // Display an error message if password is not valid
                             $err = "The username/password you entered was not valid.";
@@ -96,6 +96,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
   <!-- Latest compiled and minified CSS -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
   <link rel="stylesheet" href="css/login.css">
+    <link rel="shortcut icon" href="img/favicon.ico"/>
 </head>
 
 <body>
