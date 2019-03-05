@@ -56,8 +56,8 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
       <br />
       <div class="row">
         <div class="buttons">
-          <p
-              <a href="" class="btn btn-info">Add bankaccount</a>>
+          <p>
+              <a href="" class="btn btn-info">Add bankaccount</a>
               <a href="" class="btn btn-warning">Disable bankaccount</a>
               <a href="" class="btn btn-danger">Delete bankaccount</a>
           </p>

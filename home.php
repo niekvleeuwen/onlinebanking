@@ -56,8 +56,8 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
       <br />
       <div class="row">
         <div class="buttons">
-          <p
-              <a href="accounts.php" class="btn btn-info">Manage accounts</a>>
+          <p>
+              <a href="accounts.php" class="btn btn-info">Manage accounts</a>
               <a href="reset-password.php" class="btn btn-warning">Reset Your Password</a>
               <a href="logout.php" class="btn btn-danger">Sign Out of Your Account</a>
           </p>
