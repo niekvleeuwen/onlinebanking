@@ -7,6 +7,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
     header("location: index.php");
     exit;
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -27,9 +28,12 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
             // Include config file
             require_once "config.php";
 
-            $sql = "SELECT iban, balance FROM accounts WHERE username IN (SELECT username FROM users WHERE username='$_SESSION['username']')";
-            $result = mysqli_query($link, $sql);
+            $stmt = $link->prepare('SELECT iban, balance FROM accounts WHERE id IN (SELECT id FROM users WHERE username = ?)');
+            $stmt->bind_param('s', $_SESSION["username"]); // 's' specifies the variable type => 'string'
 
+            $stmt->execute();
+
+            $result = $stmt->get_result();
 
             echo "<table class='table'><thead>
                     <tr>
@@ -38,8 +42,9 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                     </tr>
                   </thead><tbody>"; // start a table tag in the HTML
 
-            while($row = mysqli_fetch_array($result)){   //Creates a loop to loop through results
-            echo "<tr><td>" . $row['iban'] . "</td><td>" . $row['balance'] . "</td></tr>";  //$row['index'] the index here is a field name
+            while ($row = $result->fetch_assoc()) {
+                // do something with $row
+                echo "<tr><td>" . $row['iban'] . "</td><td>" . $row['balance'] . "</td></tr>";  //$row['index'] the index here is a field name
             }
 
             echo "</tbody></table>"; //Close the table in HTML
