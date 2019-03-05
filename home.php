@@ -27,7 +27,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
             // Include config file
             require_once "config.php";
 
-            $sql = "SELECT iban, balance FROM users";
+            $sql = "SELECT iban, balance FROM accounts WHERE username IN (SELECT username FROM users WHERE username='$_SESSION['username']')";
             $result = mysqli_query($link, $sql);
 
 
