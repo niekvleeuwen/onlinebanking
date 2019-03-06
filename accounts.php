@@ -8,6 +8,70 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
     exit;
 }
 
+// Include config file
+require_once "config.php";
+
+// Define variables and initialize with empty values
+$pin = $nuid = "";
+$pin_err = $nuid_err = "";
+
+// Processing form data when form is submitted
+if($_SERVER["REQUEST_METHOD"] == "POST"){
+
+    // Validate pin
+    if(empty(trim($_POST["pin"]))){
+        $pin_err = "Please enter a pin.";
+    } else{
+        if(strlen($_POST["pin"]) == 4){
+          if(is_numeric($_POST["pin"])){
+              $pin = trim($_POST["pin"]);
+          }else{
+              $pin_err = "Please enter numbers as pin";
+          }
+        }else{
+              $pin_err = "Please enter a pin of 4 characters.";
+        }
+    }
+
+    // Validate NUID
+    if(empty(trim($_POST["nuid"]))){
+        $nuid_err = "Please enter a nuid.";
+    } else{
+        $nuid = str_replace(' ', '', htmlspecialchars($_POST['nuid']));
+        if(strlen($nuid) != 8){
+          $nuid_err = "Please enter a valid NUID";
+        }
+    }
+
+    // Check input errors before inserting in database
+    if(empty($pin_err) && empty($nuid_err)){
+        // Prepare an insert statement
+        $sql = "INSERT INTO accounts (pin, password) VALUES (?, ?)";
+
+        if($stmt = mysqli_prepare($link, $sql)){
+            // Bind variables to the prepared statement as parameters
+            mysqli_stmt_bind_param($stmt, "ss", $param_pin, $param_password);
+
+            // Set parameters
+            $param_pin = $pin;
+            $param_password = password_hash($password, PASSWORD_DEFAULT); // Creates a password hash
+
+            // Attempt to execute the prepared statement
+            if(mysqli_stmt_execute($stmt)){
+                // Redirect to login page
+                header("location: index.php");
+            } else{
+                echo "Something went wrong. Please try again later.";
+            }
+        }
+
+        // Close statement
+        mysqli_stmt_close($stmt);
+    }
+
+    // Close connection
+    mysqli_close($link);
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -29,7 +93,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
             require_once "config.php";
 
             //Omschrijven naar een query zonder SQL injectie mogelijkheden
-            $sql = "SELECT iban, balance FROM accounts WHERE id IN (SELECT id FROM users WHERE username = '" . $_SESSION['username'] . "') ";
+            $sql = "SELECT iban, balance FROM accounts WHERE id IN (SELECT id FROM users WHERE pin = '" . $_SESSION['pin'] . "') ";
             $result = mysqli_query($link, $sql);
 
             if (mysqli_num_rows($result) > 0) {
@@ -45,7 +109,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 
                 echo "</tbody></table>"; //Close the table in HTML
             } else {
-                echo "You do not have any bank accounts";
+                echo "<div class='center'>You do not have any bank accounts</div>";
             }
 
             mysqli_close($link);
@@ -55,13 +119,53 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
       </div>
       <br />
       <div class="row">
-        <div class="buttons">
+        <div class="center">
           <p>
-              <a href="" class="btn btn-info">Add bankaccount</a>
+              <a onclick="show_addaccount()" class="btn btn-info">Add bankaccount</a>
               <a href="" class="btn btn-warning">Disable bankaccount</a>
               <a href="" class="btn btn-danger">Delete bankaccount</a>
           </p>
         </div>
       </div>
+      <div class="row">
+          <div class="center">
+            <div id="addaccount">
+              <hr>
+              <div class="col-sm-4"></div>
+              <div class="col-sm-4">
+                <div class="wrapper" align="left">
+                    <h2>Add a bankaccount</h2>
+                    <p>Please fill this form to create a bankaccount.</p>
+                    <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
+                        <div class="form-group <?php echo (!empty($pin_err)) ? 'has-error' : ''; ?>">
+                            <label>PIN</label>
+                            <input type="text" name="pin" class="form-control" value="<?php echo $pin; ?>">
+                            <span class="help-block"><?php echo $pin_err; ?></span>
+                        </div>
+                        <div class="form-group <?php echo (!empty($nuid_err)) ? 'has-error' : ''; ?>">
+                            <label>NUID</label>
+                            <input type="text" name="nuid" class="form-control" value="<?php echo $nuid; ?>">
+                            <span class="help-block"><?php echo $nuid_err; ?></span>
+                        </div>
+                        <div class="form-group">
+                            <input type="submit" class="btn btn-primary" value="Submit">
+                        </div>
+                    </form>
+                </div>
+              </div>
+              <div class="col-sm-4"></div>
+            </div>
+          </div>
+      </div>
     </body>
+    <script>
+      function show_addaccount() {
+        var x = document.getElementById("addaccount");
+        if (x.style.display === "none") {
+          x.style.display = "block";
+        } else {
+          x.style.display = "none";
+        }
+      }
+    </script>
 </html>

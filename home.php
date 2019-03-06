@@ -46,7 +46,6 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 
                 echo "</tbody></table>"; //Close the table in HTML
             } else {
-
                 echo "<div class='center'>You do not have any bank accounts</div>";
             }
 
