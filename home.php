@@ -8,6 +8,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
     exit;
 }
 
+// $_SESSION['username'] = 'Niek'
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -40,7 +41,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                       </tr>
                     </thead><tbody>"; // start a table tag in the HTML
                 while($row = mysqli_fetch_assoc($result)) {
-                    echo "<tr><td>" . $row['iban'] . "</td><td>" . $row['balance'] . "</td></tr>";
+                    echo "<tr><td>" . $row['iban'] . "</td><td>" . $row['balance'] . "€</td></tr>";
                 }
 
                 echo "</tbody></table>"; //Close the table in HTML
