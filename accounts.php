@@ -10,10 +10,11 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 
 // Include config file
 require_once "config.php";
+include 'functions/iban_generator.php';
 
 // Define variables and initialize with empty values
 $pin = $nuid = "";
-$pin_err = $nuid_err = "";
+$pin_err = $nuid_err = $stat = "";
 
 // Processing form data when form is submitted
 if($_SERVER["REQUEST_METHOD"] == "POST"){
@@ -46,22 +47,23 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     // Check input errors before inserting in database
     if(empty($pin_err) && empty($nuid_err)){
         // Prepare an insert statement
-        $sql = "INSERT INTO accounts (pin, password) VALUES (?, ?)";
+        $sql = "INSERT INTO accounts (id, iban, nuid, pin) VALUES (?, ?, ?, ?)";
 
         if($stmt = mysqli_prepare($link, $sql)){
             // Bind variables to the prepared statement as parameters
-            mysqli_stmt_bind_param($stmt, "ss", $param_pin, $param_password);
+            mysqli_stmt_bind_param($stmt, "isss", $param_id, $param_iban, $param_nuid, $param_pin);
 
             // Set parameters
+            $param_id = $_SESSION['id'];
+            $param_iban = ibanGenerator("SU", "USSR");
+            $param_nuid = $nuid;
             $param_pin = $pin;
-            $param_password = password_hash($password, PASSWORD_DEFAULT); // Creates a password hash
 
             // Attempt to execute the prepared statement
             if(mysqli_stmt_execute($stmt)){
-                // Redirect to login page
-                header("location: index.php");
+                $stat = "Succes!";
             } else{
-                echo "Something went wrong. Please try again later.";
+                $err = "Something went wrong. Please try again later. <br />";
             }
         }
 
@@ -89,11 +91,22 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         <div class="col-sm-3"></div>
         <div class="col-sm-6">
           <?php
+            if($err){
+              echo("<div class='alert alert-danger' role='alert'>
+                ". $err . "
+              </div>");
+            }
+            if($stat){
+              echo("<div class='alert alert-succes' role='alert'>
+                ". $stat . "
+              </div>");
+            }
+
             // Include config file
             require_once "config.php";
 
             //Omschrijven naar een query zonder SQL injectie mogelijkheden
-            $sql = "SELECT iban, balance FROM accounts WHERE id IN (SELECT id FROM users WHERE pin = '" . $_SESSION['pin'] . "') ";
+            $sql = "SELECT iban, balance FROM accounts WHERE id IN (SELECT id FROM users WHERE pin = '" . $_SESSION['id'] . "') ";
             $result = mysqli_query($link, $sql);
 
             if (mysqli_num_rows($result) > 0) {
@@ -159,6 +172,9 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
       </div>
     </body>
     <script>
+      x = document.getElementById("addaccount");
+      x.style.display = 'none'; //hide by default
+
       function show_addaccount() {
         var x = document.getElementById("addaccount");
         if (x.style.display === "none") {
