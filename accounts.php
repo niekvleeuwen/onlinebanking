@@ -34,15 +34,38 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         }
     }
 
-    // Validate NUID
+    // Validate nuid
     if(empty(trim($_POST["nuid"]))){
-        $nuid_err = "Please enter a nuid.";
+        $nuid_err = "Please enter a NUID.";
     } else{
-        $nuid = str_replace(' ', '', htmlspecialchars($_POST['nuid']));
-        if(strlen($nuid) != 8){
-          $nuid_err = "Please enter a valid NUID";
+        // Prepare a select statement
+        $sql = "SELECT nuid FROM accounts WHERE nuid = ?";
+
+        if($stmt = mysqli_prepare($link, $sql)){
+            // Bind variables to the prepared statement as parameters
+            mysqli_stmt_bind_param($stmt, "s", $param_nuid);
+
+            // Set parameters
+            $param_nuid = str_replace(' ', '', htmlspecialchars($_POST['nuid']));
+
+            // Attempt to execute the prepared statement
+            if(mysqli_stmt_execute($stmt)){
+                /* store result */
+                mysqli_stmt_store_result($stmt);
+
+                if(mysqli_stmt_num_rows($stmt) == 1){
+                    $nuid_err = "This nuid is already taken.";
+                } else
+                  if(strlen($param_nuid) == 8){
+                     $nuid = str_replace(' ', '', htmlspecialchars($_POST['nuid']));
+                  }
+                }
+            } else{
+                $err = "Oops! Something went wrong. Please try again later.";
+            }
+            // Close statement
+            mysqli_stmt_close($stmt);
         }
-    }
 
     // Check input errors before inserting in database
     if(empty($pin_err) && empty($nuid_err)){
@@ -137,6 +160,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
               <a onclick="show_addaccount()" class="btn btn-info">Add bankaccount</a>
               <a href="" class="btn btn-warning">Disable bankaccount</a>
               <a href="" class="btn btn-danger">Delete bankaccount</a>
+              <a href="index.php" class="btn btn-info">Home</a>
           </p>
         </div>
       </div>
@@ -172,9 +196,14 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
       </div>
     </body>
     <script>
-      x = document.getElementById("addaccount");
-      x.style.display = 'none'; //hide by default
-
+      <?php
+        if(empty($pin_err) && empty($nuid_err)){ //check if there are form errors, otherwise hide the form
+          echo("
+              x = document.getElementById('addaccount');
+              x.style.display = 'none'; //hide by default
+          ");
+        }
+      ?>
       function show_addaccount() {
         var x = document.getElementById("addaccount");
         if (x.style.display === "none") {
