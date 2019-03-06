@@ -25,7 +25,7 @@ CREATE TABLE `accounts` (
   `iban` varchar(14) NOT NULL,
   `nuid` VARCHAR(8) NOT NULL ,
   `balance` int(11) NOT NULL,
-  `pin_attempts` int(11) NOT NULL,
+  `pin_attempts` int(1) NOT NULL,
   `pin` varchar(32) NOT NULL,
    PRIMARY KEY (iban),
    FOREIGN KEY (id)
