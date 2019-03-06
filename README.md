@@ -5,18 +5,17 @@ Online banking system for use in Project 3/4.
 
 ### Create the database `clients`
 ```sql
-CREATE TABLE `users` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `username` varchar(50) NOT NULL UNIQUE,
-  `password` varchar(255) NOT NULL,
-  `created_at` datetime DEFAULT CURRENT_TIMESTAMP
-  PRIMARY KEY (`id`),
-)
-
-ENGINE = InnoDB
-CHARSET=utf8
-COLLATE utf8_bin
-COMMENT = 'This table is meant for the client information.';
+  CREATE TABLE  `users` (
+    `id` INT( 11 ) NOT NULL AUTO_INCREMENT ,
+    `username` VARCHAR( 50 ) NOT NULL UNIQUE ,
+    `password` VARCHAR( 255 ) NOT NULL ,
+    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP ,
+    PRIMARY KEY (`id`)
+  )
+  ENGINE = INNODB
+  CHARSET = utf8
+  COLLATE utf8_bin
+  COMMENT =  'This table is meant for the client information.'
 ```
 
 ### Create the database `accounts`
@@ -30,8 +29,7 @@ CREATE TABLE `accounts` (
   `pin` varchar(32) NOT NULL,
    PRIMARY KEY (iban),
    FOREIGN KEY (id)
-   REFERENCES users (id));
-
+   REFERENCES users (id),
    UNIQUE (`nuid`)
 )
 
