@@ -55,7 +55,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
                 if(mysqli_stmt_num_rows($stmt) == 1){
                     $nuid_err = "This nuid is already taken.";
-                } else
+                } else {
                   if(strlen($param_nuid) == 8){
                      $nuid = str_replace(' ', '', htmlspecialchars($_POST['nuid']));
                   }
@@ -63,9 +63,11 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             } else{
                 $err = "Oops! Something went wrong. Please try again later.";
             }
-            // Close statement
-            mysqli_stmt_close($stmt);
         }
+
+        // Close statement
+        mysqli_stmt_close($stmt);
+    }
 
     // Check input errors before inserting in database
     if(empty($pin_err) && empty($nuid_err)){
@@ -93,9 +95,6 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         // Close statement
         mysqli_stmt_close($stmt);
     }
-
-    // Close connection
-    mysqli_close($link);
 }
 ?>
 <!DOCTYPE html>
@@ -120,16 +119,13 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
               </div>");
             }
             if($stat){
-              echo("<div class='alert alert-succes' role='alert'>
+              echo("<div class='alert alert-info' role='alert'>
                 ". $stat . "
               </div>");
             }
 
-            // Include config file
-            require_once "config.php";
-
             //Omschrijven naar een query zonder SQL injectie mogelijkheden
-            $sql = "SELECT iban, balance FROM accounts WHERE id IN (SELECT id FROM users WHERE pin = '" . $_SESSION['id'] . "') ";
+            $sql = "SELECT iban, balance FROM accounts WHERE id IN (SELECT id FROM users WHERE id = '" . $_SESSION['id'] . "') ";
             $result = mysqli_query($link, $sql);
 
             if (mysqli_num_rows($result) > 0) {
@@ -140,7 +136,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                       </tr>
                     </thead><tbody>"; // start a table tag in the HTML
                 while($row = mysqli_fetch_assoc($result)) {
-                    echo "<tr><td>" . $row['iban'] . "</td><td>" . $row['balance'] . "</td></tr>";
+                    echo "<tr><td>" . $row['iban'] . "</td><td>€" . $row['balance'] . "</td></tr>";
                 }
 
                 echo "</tbody></table>"; //Close the table in HTML
