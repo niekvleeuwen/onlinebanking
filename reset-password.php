@@ -80,6 +80,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         body{ font: 14px sans-serif; }
         .wrapper{ width: 350px; padding: 20px; }
     </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
     <div class="wrapper">
