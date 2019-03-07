@@ -1,22 +1,17 @@
 <?php
     // Initialize the session
     session_start();
-
     // Check if the user is logged in, if not then redirect him to login page
     if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
         header("location: index.php");
         exit;
     }
-
     // Include config file
     require_once "../config.php";
-
     /*STEPS*/
     //Firts check if account is Empty
-
     $iban = "";
     $err = "";
-
     // Validate iban
     if(empty(trim($_POST["iban"]))){
         $err = "Please enter a IBAN.";
@@ -24,72 +19,64 @@
       if(strlen($_POST["iban"]) == 14){
           // Prepare a select statement
           $sql = "SELECT id, balance FROM accounts WHERE iban = ?";
-
           if($stmt = mysqli_prepare($link, $sql)){
               // Bind variables to the prepared statement as parameters
               mysqli_stmt_bind_param($stmt, "s", $param_iban);
-
               // Set parameters
               $param_iban = htmlspecialchars($_POST['iban']);
-
               // Attempt to execute the prepared statement
               if(mysqli_stmt_execute($stmt)){
                   /* store result */
                   mysqli_stmt_store_result($stmt);
-
                   mysqli_stmt_bind_result($stmt, $id, $balance);
-
                   if(mysqli_stmt_fetch($stmt)){
                       if($id == $_SESSION['id']){
                         if($balance == 0){
-                            // Close first statement
-                            mysqli_stmt_close($stmt);
+                          // Close first statement
+                          mysqli_stmt_close($stmt);
+                          //Drop table
+                          $sql = "DELETE FROM accounts WHERE iban= ?";
 
-                            //Drop table
-                            $sql = "DELETE FROM accounts WHERE iban = ?";
-
-                            if($stmt = mysqli_prepare($link, $sql)){
-                                // Bind variables to the prepared statement as parameters
-                                mysqli_stmt_bind_param($stmt, "s", $param_iban);
-
-                                // Set parameters
-                                //$param_iban = $_POST["iban"]
-
-                                // Attempt to execute the prepared statement
-                                if(mysqli_stmt_execute($stmt)){
-                                    //Deleted successfully.
-                                    $stat = "Your account has been successfully removed!"
-                                } else{
-                                    setError();
-                                }
+                          if($stmt = mysqli_prepare($link, $sql)){
+                            //Bind variables to the prepared statement as parameters
+                            mysqli_stmt_bind_param($stmt, "s", $iban);
+                            // Set parameters
+                            $iban = htmlspecialchars($_POST['iban']);
+                            // Attempt to execute the prepared statement
+                            if(mysqli_stmt_execute($stmt)){
+                                $stat = "Your account is successfully deleted!";
                             }else{
-                                setError();
+                              setError("");
                             }
                           }else{
-                            setError("There is still money on the account. Please transfer the money first.");
+                            setError("");
                           }
+
+                        }else{
+                          setError("There is still money on the account. Please transfer the money first.");
+                        }
                       }else{
-                          setError();
+                          setError("");
                       }
                     }else{
-                        setError();
+                        setError("");
                     }
                   }else{
-                    setError();
+                    setError("");
                   }
               } else{
-                 setError();
+                setError("");
               }
+              // Close statement
+              mysqli_stmt_close($stmt);
           }else{
-             setError("Please enter a correct IBAN.");
+            setError("Please enter a correct IBAN.");
           }
-
-          // Close statement
-          mysqli_stmt_close($stmt);
     }
 
     function setError($err_msg){
-      if(!$err_msg){
+      global $err; //use global so variable is stored outside scope
+      if($err_msg == ""){
         $err = "Oops! Something went wrong. Please try again later.";
       }else{
         $err = $err_msg;
