@@ -1,7 +1,6 @@
 <?php
 /*
-Thanks bowero
-https://github.com/projectbank/API
+Thanks to https://github.com/projectbank/API
 */
 
 // This functions returns a big random number

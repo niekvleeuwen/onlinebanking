@@ -42,28 +42,58 @@
                   if(mysqli_stmt_fetch($stmt)){
                       if($id == $_SESSION['id']){
                         if($balance == 0){
+                            // Close first statement
+                            mysqli_stmt_close($stmt);
+
                             //Drop table
-                            if(""){
-                                $stat = "Account is successfully deletedccount is successfully deleted";
+                            $sql = "DELETE FROM accounts WHERE iban = ?";
+
+                            if($stmt = mysqli_prepare($link, $sql)){
+                                // Bind variables to the prepared statement as parameters
+                                mysqli_stmt_bind_param($stmt, "s", $param_iban);
+
+                                // Set parameters
+                                //$param_iban = $_POST["iban"]
+
+                                // Attempt to execute the prepared statement
+                                if(mysqli_stmt_execute($stmt)){
+                                    //Deleted successfully.
+                                    $stat = "Your account has been successfully removed!"
+                                } else{
+                                    setError();
+                                }
                             }else{
-                              $err = "Oops! Something went wrong. Please try again later. Code 1";
+                                setError();
                             }
+                          }else{
+                            setError("There is still money on the account. Please transfer the money first.");
                           }
                       }else{
-                        $err = "There is still money on the account. Please transfer the money first.";
+                          setError();
                       }
                     }else{
-                        $err = "Oops! Something went wrong. Please try again later. Code 2";
+                        setError();
                     }
                   }else{
-                    $err = "Oops! Something went wrong. Please try again later. Code 3";
+                    setError();
                   }
               } else{
-                  $err = "Oops! Something went wrong. Please try again later. Code 4";
+                 setError();
               }
           }else{
-            $iban_err = "Please enter a correct IBAN.";
+             setError("Please enter a correct IBAN.");
           }
+
+          // Close statement
+          mysqli_stmt_close($stmt);
+    }
+
+    function setError($err_msg){
+      if(!$err_msg){
+        $err = "Oops! Something went wrong. Please try again later.";
+      }else{
+        $err = $err_msg;
+      }
     }
   ?>
   <!DOCTYPE html>
