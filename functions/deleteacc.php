@@ -64,9 +64,6 @@
           }else{
             $iban_err = "Please enter a correct IBAN.";
           }
-
-          // Close statement
-          mysqli_stmt_close($stmt);
     }
   ?>
   <!DOCTYPE html>
