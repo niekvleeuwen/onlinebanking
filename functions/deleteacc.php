@@ -15,11 +15,11 @@
     //Firts check if account is Empty
 
     $iban = "";
-    $iban_err = "";
+    $err = "";
 
     // Validate iban
     if(empty(trim($_POST["iban"]))){
-        $iban_err = "Please enter a IBAN.";
+        $err = "Please enter a IBAN.";
     } else{
       // Prepare a select statement
       $sql = "SELECT id, balance FROM accounts WHERE iban = ?";
@@ -86,13 +86,16 @@
   <html lang="en">
   <head>
       <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
       <title>Delete Accounts</title>
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.css">
       <link rel="stylesheet" href="css/home.css">
   </head>
   <body>
       <div class="page-header">
-          <h1>Delete Account</h1>
+          <div class="text-center">
+            <h1>Delete Account</h1>
+          </div>
       </div>
       <div class="container">
         <div class="row">
