@@ -21,7 +21,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 </head>
 <body>
     <div class="page-header">
-        <h1>Hi, <b><?php echo htmlspecialchars($_SESSION["username"]); ?></b>. Welcome to HR Bank.</h1>
+        <h1>Hi, <b><?php echo htmlspecialchars($_SESSION["username"]); ?></b>.</h1><p class="text-muted">Welcome to the Monarch Douglas Bank</p>
     </div>
     <div class="row">
         <div class="col-sm-3"></div>
@@ -60,6 +60,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
         <div class="center">
           <p>
               <a href="accounts.php" class="btn btn-info">Manage accounts</a>
+              <a href="transfer.php" class="btn btn-danger">Transfer</a>
               <a href="reset-password.php" class="btn btn-warning">Change your Password</a>
               <a href="logout.php" class="btn btn-danger">Sign Out of Your Account</a>
           </p>
