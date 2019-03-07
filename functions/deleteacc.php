@@ -21,65 +21,52 @@
     if(empty(trim($_POST["iban"]))){
         $err = "Please enter a IBAN.";
     } else{
-      // Prepare a select statement
-      $sql = "SELECT id, balance FROM accounts WHERE iban = ?";
+      if(strlen($_POST["iban"]) == 14){
+          // Prepare a select statement
+          $sql = "SELECT id, balance FROM accounts WHERE iban = ?";
 
-      if($stmt = mysqli_prepare($link, $sql)){
-          // Bind variables to the prepared statement as parameters
-          mysqli_stmt_bind_param($stmt, "s", $param_iban);
+          if($stmt = mysqli_prepare($link, $sql)){
+              // Bind variables to the prepared statement as parameters
+              mysqli_stmt_bind_param($stmt, "s", $param_iban);
 
-          // Set parameters
-          $param_iban = htmlspecialchars($_POST['iban']);
+              // Set parameters
+              $param_iban = htmlspecialchars($_POST['iban']);
 
-          // Attempt to execute the prepared statement
-          if(mysqli_stmt_execute($stmt)){
-              /* store result */
-              mysqli_stmt_store_result($stmt);
+              // Attempt to execute the prepared statement
+              if(mysqli_stmt_execute($stmt)){
+                  /* store result */
+                  mysqli_stmt_store_result($stmt);
 
-              while($row = mysqli_fetch_array($result)){
-                  $id = $row['id'];
-                  $balance = $row['balance'];
-              }
+                  mysqli_stmt_bind_result($stmt, $id, $balance);
 
-              if($id == $_SESSION['id']){
-                  if($balance == 0){
-                    // Prepare a select statement
-                    $sql = "DELETE FROM accounts WHERE iban = ?";
-
-                    if($stmt = mysqli_prepare($link, $sql)){
-                        // // Bind variables to the prepared statement as parameters
-                        // mysqli_stmt_bind_param($stmt, "s", $param_iban);
-                        //
-                        // // Set parameters
-                        // $param_iban = htmlspecialchars($_POST['iban']);
-
-                        // Attempt to execute the prepared statement
-                        if(mysqli_stmt_execute($stmt)){
-                            $stat = "AAccount is successfully deletedccount is successfully deleted";
-                        }else{
-                          $err = "Oops! Something went wrong. Please try again later.";
-                        }
+                  if(mysqli_stmt_fetch($stmt)){
+                      if($id == $_SESSION['id']){
+                        if($balance == 0){
+                            //Drop table
+                            if(""){
+                                $stat = "Account is successfully deletedccount is successfully deleted";
+                            }else{
+                              $err = "Oops! Something went wrong. Please try again later. Code 1";
+                            }
+                          }
+                      }else{
+                        $err = "There is still money on the account. Please transfer the money first.";
                       }
+                    }else{
+                        $err = "Oops! Something went wrong. Please try again later. Code 2";
+                    }
                   }else{
-                    $err = "There is still money on the account. Please transfer the money first.";
+                    $err = "Oops! Something went wrong. Please try again later. Code 3";
                   }
-              }else{
-                $err = "Oops! Something went wrong. Please try again later.";
+              } else{
+                  $err = "Oops! Something went wrong. Please try again later. Code 4";
               }
-          } else{
-              $err = "Oops! Something went wrong. Please try again later.";
-          }
-      }
-
-      // Close statement
-      mysqli_stmt_close($stmt);
-
-
-        if(strlen($_POST["iban"]) == 14){
-            $iban = trim($_POST["iban"]);
-        }else{
+          }else{
             $iban_err = "Please enter a correct IBAN.";
-        }
+          }
+
+          // Close statement
+          mysqli_stmt_close($stmt);
     }
   ?>
   <!DOCTYPE html>
@@ -89,7 +76,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <title>Delete Accounts</title>
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.css">
-      <link rel="stylesheet" href="css/home.css">
+      <link rel="stylesheet" href="../css/home.css">
   </head>
   <body>
       <div class="page-header">
@@ -115,6 +102,12 @@
                 ?>
               </div>
               <div class="col-sm-3"></div>
+          </div>
+          <div class="row">
+              <div class="center">
+                  <hr>
+                  <a href="../accounts.php">Back</a>
+              </div>
           </div>
         </div>
     </body>

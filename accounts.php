@@ -199,14 +199,13 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                   <div class="wrapper" align="left">
                       <h2>Delete a bankaccount</h2>
                       <p>Please fill this form to delete a bankaccount.</p>
-                      <form action='functions/deleteacc.php' method='post'><select class='form-control' name='id'>
+                      <form action='functions/deleteacc.php' method='post'><select class='form-control' name='iban'>
                         <?php
 
                             //verkrijg de informatie uit de tabel
                             $sql = "SELECT iban, balance FROM accounts WHERE id IN (SELECT id FROM users WHERE id = '" . $_SESSION['id'] . "') ";
                             $result = mysqli_query($link, $sql);
 
-                            echo("");
                             while($row = mysqli_fetch_array($result)){
                                 echo("<option value='" . $row['iban'] . "'>" . $row['iban'] . "</option>");
                             }
@@ -221,6 +220,12 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                 </div>
                 <div class="col-sm-4"></div>
               </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="center">
+                <hr>
+                <a href="home.php">Back</a>
             </div>
         </div>
       </div>
