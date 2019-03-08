@@ -172,7 +172,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                       <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
                           <div class="form-group <?php echo (!empty($pin_err)) ? 'has-error' : ''; ?>">
                               <label>PIN</label>
-                              <input type="text" name="pin" class="form-control" value="<?php echo $pin; ?>">
+                              <input type="text" maxlength="4" name="pin" class="form-control" value="<?php echo $pin; ?>">
                               <span class="help-block"><?php echo $pin_err; ?></span>
                           </div>
                           <div class="form-group <?php echo (!empty($nuid_err)) ? 'has-error' : ''; ?>">
