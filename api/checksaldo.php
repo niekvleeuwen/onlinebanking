@@ -3,7 +3,7 @@
 
     // Include config file
     require_once "../config.php";
-
+    
     $nuid_length = 8;
     $pin_length = 4;
 
@@ -29,7 +29,11 @@
             // fetch value
             $stmt->fetch();
 
-            $response = array('status' => '0', 'balance' => $balance);
+            if(isset($balance)){
+                $response = array('status' => '0', 'balance' => $balance);
+            }else{
+                $response = array('status' => '1', 'error' => 'Card or Pin not correct.');
+            }
 
             $stmt->close();
         }else{
