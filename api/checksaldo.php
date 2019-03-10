@@ -29,14 +29,14 @@
             // fetch value
             $stmt->fetch();
 
-            $response = array('balance' => $balance);
+            $response = array('status' => '0', 'balance' => $balance);
 
             $stmt->close();
         }else{
-            $response = array('error' => 'PIN not entered or correct.');
+            $response = array('status' => '1', 'error' => 'PIN not entered or correct.');
         }
     }else{
-        $response = array('error' => 'NUID not entered or correct.');
+        $response = array('status' => '1', 'error' => 'NUID not entered or correct.');
     }
 
     //close connection

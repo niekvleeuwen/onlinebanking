@@ -40,9 +40,9 @@
 
               // Attempt to execute the prepared statement
               if(mysqli_stmt_execute($stmt)){
-                  $response = array('iban' => $param_iban);
+                  $response = array('status' => '0', 'iban' => $param_iban);
               } else{
-                $response = array('error' => 'Oops! Something went wrong. Please try again later.');
+                $response = array('status' => '1', 'error' => 'Oops! Something went wrong. Please try again later.');
               }
           }
 
@@ -52,10 +52,10 @@
           //Close connection
           $link->close();
       }else{
-          $response = array('error' => 'PIN not entered or correct.');
+          $response = array('status' => '1', 'error' => 'PIN not entered or correct.');
       }
   }else{
-      $response = array('error' => 'NUID not entered or correct.');
+      $response = array('status' => '1', 'error' => 'NUID not entered or correct.');
   }
 
   echo json_encode($response);
