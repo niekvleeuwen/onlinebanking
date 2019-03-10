@@ -1,9 +1,8 @@
 <?php
     header('Content-Type: application/json');
 
-    // Include config file
     require_once "../config.php";
-    
+
     $nuid_length = 8;
     $pin_length = 4;
 
@@ -43,8 +42,7 @@
         $response = array('status' => '1', 'error' => 'NUID not entered or correct.');
     }
 
-    //close connection
     $link->close();
 
-    echo json_encode($response);
+    echo(json_encode($response));
 ?>

@@ -5,13 +5,13 @@
   session_start();
 
   /* This page is only for logged in users */
+
   // Check if the user is logged in, if not then redirect user to login page
   if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
       header("location: ../index.php");
       exit;
   }
 
-  // Include config file
   require_once "../config.php";
 
   $nuid_length = 8;
@@ -24,33 +24,21 @@
       if(isset($pin) && strlen($pin) == $pin_length){
           include '../functions/iban_generator.php';
 
-          // Prepare an insert statement
+          //first get the balance and id from the user
           $sql = "INSERT INTO accounts (id, iban, nuid, pin) VALUES (?, ?, ?, ?)";
+          $stmt->bind_param("isss", $param_id, $param_iban, $param_nuid, $param_pin);
 
-          if($stmt = mysqli_prepare($link, $sql)){
+          $param_id = $_SESSION['id'];
+          $param_iban = ibanGenerator("MD", "USSR");
+          $param_nuid = $nuid;
+          $param_pin = $pin;
 
-              // Bind variables to the prepared statement as parameters
-              mysqli_stmt_bind_param($stmt, "isss", $param_id, $param_iban, $param_nuid, $param_pin);
-
-              // Set parameters
-              $param_id = 1;//$_SESSION['id'];
-              $param_iban = ibanGenerator("MD", "USSR");
-              $param_nuid = $nuid;
-              $param_pin = $pin;
-
-              // Attempt to execute the prepared statement
-              if(mysqli_stmt_execute($stmt)){
-                  $response = array('status' => '0', 'iban' => $param_iban);
-              } else{
-                $response = array('status' => '1', 'error' => 'Oops! Something went wrong. Please try again later.');
-              }
+          if (!$stmt->execute()) {
+              $response = array('status' => '0', 'iban' => $param_iban);
+          }else{
+              $response = array('status' => '1', 'error' => 'Oops! Something went wrong. Please try again later.');
           }
-
-          // Close statement
           $stmt->close();
-
-          //Close connection
-          $link->close();
       }else{
           $response = array('status' => '1', 'error' => 'PIN not entered or correct.');
       }
@@ -58,5 +46,7 @@
       $response = array('status' => '1', 'error' => 'NUID not entered or correct.');
   }
 
-  echo json_encode($response);
+  $link->close();
+  
+  echo(json_encode($response));
 ?>
