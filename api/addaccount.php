@@ -4,29 +4,31 @@
   // Initialize the session
   session_start();
 
-  /* THis page is only for logged in users */
+  /* This page is only for logged in users */
 
 
   // Check if the user is logged in, if not then redirect user to login page
   if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
-      header("location: index.php");
+      header("location: ../index.php");
       exit;
   }
 
   // Include config file
-  require_once "config.php";
+  require_once "../config.php";
 
   $nuid_length = 8;
   $pin_length = 4;
   $username_length = 50;
 
+
   $nuid = str_replace(' ', '', htmlspecialchars($_POST['nuid'])); //remove whitespaces
   $pin = str_replace(' ', '', htmlspecialchars($_POST['pin'])); //remove whitespaces
   $username = htmlspecialchars($_POST['username']);
 
-  if(isset($nuid) || strlen($nuid) == $nuid_length){
-      if(isset($pin) || strlen($nuid) == $pin_length){
-          include 'functions/iban_generator.php';
+  if(isset($nuid) && strlen($nuid) == $nuid_length){
+      if(isset($pin) && strlen($pin) == $pin_length){
+          /*
+          include '../functions/iban_generator.php';
 
           // Prepare an insert statement
           $sql = "INSERT INTO accounts (id, iban, nuid, pin) VALUES (?, ?, ?, ?)";
@@ -55,6 +57,8 @@
 
           //Close connection
           mysqli_close($link);
+          */
+          $response = array('iban' => 'Test');
       }else{
           $response = array('error' => 'PIN not entered/correct. PIN is 4 characters long');
       }
@@ -62,4 +66,5 @@
       $response = array('error' => 'NUID not entered/correct. NUID is 8 characters long');
   }
 
+  echo json_encode($response);
 ?>
