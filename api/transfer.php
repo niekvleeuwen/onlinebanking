@@ -3,11 +3,6 @@
 
     require_once "../config.php";
 
-    $_POST['nuid'] = "B8C5E3K8";
-    $_POST['pin'] = "1111";
-    $_POST['amount'] = 10;
-    $_POST['iban'] = "SU76USSR562611";
-
     $nuid_length = 8;
     $pin_length = 4;
     $iban_length = 14;
