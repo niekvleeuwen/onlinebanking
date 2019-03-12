@@ -1,7 +1,8 @@
 <?php
     header('Content-Type: application/json');
 
-    require_once "../config.php";
+    $_POST['nuid'] = "B8C5E3K8";
+    $_POST['pin'] = "1111";
 
     $nuid_length = 8;
     $pin_length = 4;
@@ -11,38 +12,19 @@
 
     if(isset($nuid) && strlen($nuid) == $nuid_length){
         if(isset($pin) && strlen($pin) == $pin_length){
-            // prepare and bind
-            $stmt = $link->prepare("SELECT balance FROM accounts WHERE nuid = ? AND pin = ?");
-            $stmt->bind_param("ss", $param_nuid, $param_pin);
-
-            // set parameters and execute
-            $param_nuid = $nuid;
-            $param_pin = $pin;
-
-            if (!$stmt->execute()) {
-                $response = array('error' => 'Oops! Something went wrong. Please try again later.');
-            }
-            // bind result variables
-            $stmt->bind_result($balance);
-
-            // fetch value
-            $stmt->fetch();
-
+            require_once "../api/functions.php";
+            $balance = checksaldo($nuid, $pin);
             if(isset($balance)){
                 $response = array('status' => '0', 'balance' => $balance);
             }else{
                 $response = array('status' => '1', 'error' => 'Card or Pin not correct.');
             }
-
-            $stmt->close();
         }else{
             $response = array('status' => '1', 'error' => 'PIN not entered or correct.');
         }
     }else{
         $response = array('status' => '1', 'error' => 'NUID not entered or correct.');
     }
-
-    $link->close();
 
     echo(json_encode($response));
 ?>

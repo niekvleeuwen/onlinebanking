@@ -27,14 +27,13 @@
                     $response = array('status' => '1', 'error' => 'Oops! Something went wrong. Please try again later.');
                 }
 
-                $stmt->bind_result($iban_sender, $balance);
+                $stmt->bind_result($iban_sender, $balance_sender);
                 $stmt->fetch();
                 $stmt->close();
 
                 //second get the balance from the recipient
                 $stmt = $link->prepare("SELECT balance FROM accounts WHERE iban = ?");
                 $stmt->bind_param("s", $param_iban);
-
                 $param_iban = $iban_recipient;
 
                 if (!$stmt->execute()) {
@@ -46,31 +45,17 @@
                 $stmt->close();
 
                 //chek if balance is enough to withdraw amount
-                if(isset($balance)){
-                  if($amount <= $balance){
-                    //insert the new balance of the sender
-                    $stmt = $link->prepare("UPDATE accounts SET balance = ? WHERE iban = ?");
-                    $stmt->bind_param("is", $param_newbalance, $param_iban);
-
-                    $param_newbalance = $balance - $amount;
-                    $param_iban = $iban_sender;
-
-                    if (!$stmt->execute()) {
-                        $response = array('status' => '1', 'error' => 'Oops! Something went wrong. Please try again later.');
-                    }else{
-                      //insert the new balance of the recipient
-                      $stmt = $link->prepare("UPDATE accounts SET balance = ? WHERE iban = ?");
-                      $stmt->bind_param("is", $param_newbalance, $param_iban);
-
-                      $param_newbalance = $balance_recipient + $amount;
-                      $param_iban = $iban_recipient;
-
-                      if (!$stmt->execute()) {
+                if(isset($balance_sender)){
+                  if($amount <= $balance_sender){
+                    require_once "../api/functions.php";
+                    if(update_saldo($balance_sender - $amount, $iban_sender) !== null){ //insert the new balance of the sender
+                        if(update_saldo($balance_recipient + $amount, $iban_recipient) !== null){ //insert the new balance of the recipient
+                            $response = array('status' => '0', 'amount' => $amount, 'iban' => $iban_recipient);
+                        }else{
                           $response = array('status' => '1', 'error' => 'Oops! Something went wrong. Please try again later.');
-                      }else{
-                          $response = array('status' => '0', 'amount' => $amount, 'iban' => $iban_recipient); //sent amount and recipient iban back for conformation
-                      }
-                      $stmt->close();
+                        }
+                    }else{
+                        $response = array('status' => '1', 'error' => 'Oops! Something went wrong. Please try again later.');
                     }
                 }else{
                     $response = array('status' => '1', 'error' => 'Not enough funds to withdraw.');
