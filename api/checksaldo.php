@@ -1,9 +1,5 @@
 <?php
     header('Content-Type: application/json');
-
-    $_POST['nuid'] = "B8C5E3K8";
-    $_POST['pin'] = "1111";
-
     $nuid_length = 8;
     $pin_length = 4;
 
@@ -13,7 +9,8 @@
     if(isset($nuid) && strlen($nuid) == $nuid_length){
         if(isset($pin) && strlen($pin) == $pin_length){
             require_once "../api/functions.php";
-            $balance = checksaldo($nuid, $pin);
+            $data = checksaldo($nuid, $pin, null);
+            $balance = $data['balance'];
             if(isset($balance)){
                 $response = array('status' => '0', 'balance' => $balance);
             }else{
@@ -25,6 +22,9 @@
     }else{
         $response = array('status' => '1', 'error' => 'NUID not entered or correct.');
     }
+    
+    //close connection
+    $link->close();
 
     echo(json_encode($response));
 ?>

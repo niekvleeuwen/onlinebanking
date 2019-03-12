@@ -2,7 +2,7 @@
     header('Content-Type: application/json');
 
     require_once "../config.php";
-    
+
     $nuid_length = 8;
     $pin_length = 4;
 
@@ -13,37 +13,21 @@
     if(isset($nuid) && strlen($nuid) == $nuid_length){
         if(isset($pin) && strlen($pin) == $pin_length){
           if(isset($amount)){
-              //first get the balance and id from the user
-              $stmt = $link->prepare("SELECT iban, balance FROM accounts WHERE nuid = ? AND pin = ?");
-              $stmt->bind_param("ss", $param_nuid, $param_pin);
-
-              $param_nuid = $nuid;
-              $param_pin = $pin;
-
-              if (!$stmt->execute()) {
-                  $response = array('status' => '1', 'error' => 'Oops! Something went wrong. Please try again later.');
-              }
-
-              $stmt->bind_result($iban, $balance);
-              $stmt->fetch();
-              $stmt->close();
+              require_once "../api/functions.php";
+              //first get the balance and iban from the sender
+              $data = checksaldo($nuid, $pin, null);
+              $balance = $data['balance'];
+              $iban = $data['iban'];
 
               //chek if balance is enough to withdraw amount
               if(isset($balance)){
                 if($amount <= $balance){
                   //insert the new balance
-                  $stmt = $link->prepare("UPDATE accounts SET balance = ? WHERE iban = ?");
-                  $stmt->bind_param("is", $param_newbalance, $param_iban);
-
-                  $param_newbalance = $balance - $amount;
-                  $param_iban = $iban;
-
-                  if (!$stmt->execute()) {
-                      $response = array('status' => '1', 'error' => 'Oops! Something went wrong. Please try again later.');
+                  if(update_saldo($balance - $amount, $iban) !== null){
+                    $response = array('status' => '0', 'amount' => $amount); //sent amount back for conformation
                   }else{
-                      $response = array('status' => '0', 'amount' => $amount); //sent amount back for conformation
+                    $response = array('status' => '1', 'error' => 'Oops! Something went wrong. Please try again later.');
                   }
-                  $stmt->close();
               }else{
                   $response = array('status' => '1', 'error' => 'Not enough funds to withdraw.');
               }

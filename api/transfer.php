@@ -3,6 +3,11 @@
 
     require_once "../config.php";
 
+    $_POST['nuid'] = "B8C5E3K8";
+    $_POST['pin'] = "1111";
+    $_POST['amount'] = 10;
+    $_POST['iban'] = "SU76USSR562611";
+
     $nuid_length = 8;
     $pin_length = 4;
     $iban_length = 14;
@@ -16,33 +21,15 @@
         if(isset($pin) && strlen($pin) == $pin_length){
           if(isset($iban_recipient) && strlen($iban_recipient) == $iban_length){
             if(isset($amount)){
+                include_once "../api/functions.php";
                 //first get the balance and iban from the sender
-                $stmt = $link->prepare("SELECT iban, balance FROM accounts WHERE nuid = ? AND pin = ?");
-                $stmt->bind_param("ss", $param_nuid, $param_pin);
-
-                $param_nuid = $nuid;
-                $param_pin = $pin;
-
-                if (!$stmt->execute()) {
-                    $response = array('status' => '1', 'error' => 'Oops! Something went wrong. Please try again later.');
-                }
-
-                $stmt->bind_result($iban_sender, $balance_sender);
-                $stmt->fetch();
-                $stmt->close();
+                $data = checksaldo($nuid, $pin, null);
+                $balance_sender = $data['balance'];
+                $iban_sender = $data['iban'];
 
                 //second get the balance from the recipient
-                $stmt = $link->prepare("SELECT balance FROM accounts WHERE iban = ?");
-                $stmt->bind_param("s", $param_iban);
-                $param_iban = $iban_recipient;
-
-                if (!$stmt->execute()) {
-                    $response = array('status' => '1', 'error' => 'Oops! Something went wrong. Please try again later.');
-                }
-
-                $stmt->bind_result($balance_recipient);
-                $stmt->fetch();
-                $stmt->close();
+                $data = checksaldo(null, null, $iban_recipient);
+                $balance_recipient = $data['balance'];
 
                 //chek if balance is enough to withdraw amount
                 if(isset($balance_sender)){
