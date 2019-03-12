@@ -1,7 +1,5 @@
 <?php
   header('Content-Type: application/json');
-
-  // Initialize the session
   session_start();
 
   /* This page is only for logged in users */
@@ -47,6 +45,6 @@
   }
 
   $link->close();
-  
+
   echo(json_encode($response));
 ?>
