@@ -3,9 +3,6 @@
     $nuid_length = 8;
     $pin_length = 4;
 
-    $_POST['nuid'] = "B8C5E3K8";
-    $_POST['pin'] = "1111";
-
     $nuid = str_replace(' ', '', htmlspecialchars($_POST['nuid'])); //remove whitespaces
     $pin = str_replace(' ', '', htmlspecialchars($_POST['pin'])); //remove whitespaces
 

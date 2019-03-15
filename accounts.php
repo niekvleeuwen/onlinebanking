@@ -14,7 +14,7 @@ include 'functions/iban_generator.php';
 
 // Define variables and initialize with empty values
 $pin = $nuid = "";
-$pin_err = $nuid_err = $stat = "";
+$pin_err = $nuid_err = $stat = $err = "";
 
 // Processing form data when form is submitted
 if($_SERVER["REQUEST_METHOD"] == "POST"){
