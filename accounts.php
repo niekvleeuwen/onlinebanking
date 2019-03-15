@@ -168,7 +168,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                 <div class="col-sm-4">
                   <div class="wrapper" align="left">
                       <h2>Add a bankaccount</h2>
-                      <p>Please fill this form to create a bankaccount.</p>
+                      <p>Please fill in this form to create a bankaccount.</p>
                       <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
                           <div class="form-group <?php echo (!empty($pin_err)) ? 'has-error' : ''; ?>">
                               <label>PIN</label>
@@ -198,7 +198,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                 <div class="col-sm-4">
                   <div class="wrapper" align="left">
                       <h2>Delete a bankaccount</h2>
-                      <p>Please fill this form to delete a bankaccount.</p>
+                      <p>Please fill in this form to delete a bankaccount.</p>
                       <form action='functions/deleteacc.php' method='post'><select class='form-control' name='iban'>
                         <?php
 
