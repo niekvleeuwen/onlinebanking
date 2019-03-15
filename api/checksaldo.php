@@ -3,6 +3,9 @@
     $nuid_length = 8;
     $pin_length = 4;
 
+    $_POST['nuid'] = "B8C5E3K8";
+    $_POST['pin'] = "1111";
+
     $nuid = str_replace(' ', '', htmlspecialchars($_POST['nuid'])); //remove whitespaces
     $pin = str_replace(' ', '', htmlspecialchars($_POST['pin'])); //remove whitespaces
 
@@ -22,9 +25,6 @@
     }else{
         $response = array('status' => '1', 'error' => 'NUID not entered or correct.');
     }
-    
-    //close connection
-    $link->close();
 
     echo(json_encode($response));
 ?>
