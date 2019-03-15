@@ -37,4 +37,35 @@
 
       return array('balance' => $balance, 'iban' => $iban);
     }
+
+    function checkiban($iban){
+      require "../config.php";
+      // Prepare a select statement
+      $sql = "SELECT iban FROM accounts WHERE iban = ?";
+
+      if($stmt = mysqli_prepare($link, $sql)){
+          // Bind variables to the prepared statement as parameters
+          mysqli_stmt_bind_param($stmt, "s", $param_iban);
+
+          // Set parameters
+          $param_iban = $_POST['iban'];
+
+          // Attempt to execute the prepared statement
+          if(mysqli_stmt_execute($stmt)){
+              /* store result */
+              mysqli_stmt_store_result($stmt);
+
+              if(mysqli_stmt_num_rows($stmt) == 1){
+                  return $iban;
+              } else {
+                return null;
+              }
+          } else{
+              echo(json_encode(array('status' => '1', 'error' => 'Oops! Something went wrong. Please try again later.')));
+          }
+      }
+
+      // Close statement
+      mysqli_stmt_close($stmt);
+    }
 ?>

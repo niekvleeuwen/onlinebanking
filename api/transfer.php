@@ -3,11 +3,6 @@
 
     require_once "../config.php";
 
-    $_POST['nuid'] = "B8C5E3K8";
-    $_POST['pin'] = "1111";
-    $_POST['amount'] = 10;
-    $_POST['iban'] = "SU76USSR562611";
-
     $nuid_length = 8;
     $pin_length = 4;
     $iban_length = 14;
@@ -20,38 +15,42 @@
     if(isset($nuid) && strlen($nuid) == $nuid_length){
         if(isset($pin) && strlen($pin) == $pin_length){
           if(isset($iban_recipient) && strlen($iban_recipient) == $iban_length){
-            if(isset($amount)){
-                include_once "../api/functions.php";
-                //first get the balance and iban from the sender
-                $data = checksaldo($nuid, $pin, null);
-                $balance_sender = $data['balance'];
-                $iban_sender = $data['iban'];
+            include_once "functions.php";
+            if(checkiban($iban_recipient) !== null){
+              if(isset($amount)){
+                  //first get the balance and iban from the sender
+                  $data = checksaldo($nuid, $pin, null);
+                  $balance_sender = $data['balance'];
+                  $iban_sender = $data['iban'];
 
-                //second get the balance from the recipient
-                $data = checksaldo(null, null, $iban_recipient);
-                $balance_recipient = $data['balance'];
+                  //second get the balance from the recipient
+                  $data = checksaldo(null, null, $iban_recipient);
+                  $balance_recipient = $data['balance'];
 
-                //chek if balance is enough to withdraw amount
-                if(isset($balance_sender)){
-                  if($amount <= $balance_sender){
-                    require_once "../api/functions.php";
-                    if(update_saldo($balance_sender - $amount, $iban_sender) !== null){ //insert the new balance of the sender
-                        if(update_saldo($balance_recipient + $amount, $iban_recipient) !== null){ //insert the new balance of the recipient
-                            $response = array('status' => '0', 'amount' => $amount, 'iban' => $iban_recipient);
-                        }else{
+                  //chek if balance is enough to withdraw amount
+                  if(isset($balance_sender)){
+                    if($amount <= $balance_sender){
+                      require_once "../api/functions.php";
+                      if(update_saldo($balance_sender - $amount, $iban_sender) !== null){ //insert the new balance of the sender
+                          if(update_saldo($balance_recipient + $amount, $iban_recipient) !== null){ //insert the new balance of the recipient
+                              $response = array('status' => '0', 'amount' => $amount, 'iban' => $iban_recipient);
+                          }else{
+                            $response = array('status' => '1', 'error' => 'Oops! Something went wrong. Please try again later.');
+                          }
+                      }else{
                           $response = array('status' => '1', 'error' => 'Oops! Something went wrong. Please try again later.');
-                        }
-                    }else{
-                        $response = array('status' => '1', 'error' => 'Oops! Something went wrong. Please try again later.');
-                    }
+                      }
+                  }else{
+                      $response = array('status' => '1', 'error' => 'Not enough funds to withdraw.');
+                  }
                 }else{
-                    $response = array('status' => '1', 'error' => 'Not enough funds to withdraw.');
+                    $response = array('status' => '1', 'error' => 'Card or Pin not correct.');
                 }
               }else{
-                  $response = array('status' => '1', 'error' => 'Card or Pin not correct.');
+                  $response = array('status' => '1', 'error' => 'Iban not entered or correct.');
               }
             }else{
-                $response = array('status' => '1', 'error' => 'Iban not entered or correct.');
+              $response = array('status' => '1', 'error' => 'Iban not recognised.');
             }
           }else{
               $response = array('status' => '1', 'error' => 'PIN not entered or correct.');
