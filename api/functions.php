@@ -15,7 +15,7 @@
 
       // prepare and bind
       if(isset($iban)){
-        //check balance with iban
+        //check balance with iban (no pin verification)
         $stmt = $link->prepare("SELECT balance, iban FROM accounts WHERE iban = ?");
         $stmt->bind_param("s", $param_iban,);
         $param_iban = $iban;
