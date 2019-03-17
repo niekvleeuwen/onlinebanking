@@ -9,7 +9,7 @@ server with default setting (user 'root' with no password) */
 if(!defined('DB_SERVER')){
   define('DB_SERVER', 'localhost');
   define('DB_USERNAME', 'root');
-  define('DB_PASSWORD', 'GlDZ9cbu4FLG');
+  define('DB_PASSWORD', '');
   define('DB_NAME', 'u45644p43373_bank');
 }
 

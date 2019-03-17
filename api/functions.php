@@ -15,10 +15,12 @@
 
       // prepare and bind
       if(isset($iban)){
+        //check balance with iban
         $stmt = $link->prepare("SELECT balance, iban FROM accounts WHERE iban = ?");
         $stmt->bind_param("s", $param_iban,);
         $param_iban = $iban;
       }else{
+        //check balance with nuid
         $stmt = $link->prepare("SELECT balance, iban FROM accounts WHERE nuid = ? AND pin = ?");
         $stmt->bind_param("ss", $param_nuid, $param_pin);
         // set parameters and execute
