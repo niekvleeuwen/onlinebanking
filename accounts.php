@@ -1,115 +1,124 @@
 <?php
-// Initialize the session
-session_start();
+  // Initialize the session
+  session_start();
 
-// Check if the user is logged in, if not then redirect user to login page
-if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
-    header("location: index.php");
-    exit;
-}
+  // Check if the user is logged in, if not then redirect user to login page
+  if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
+      header("location: login.php");
+      exit;
+  }
 
-// Include config file
-require_once "config.php";
-include 'functions/iban_generator.php';
+  // Include config file
+  require_once "config.php";
+  include 'functions/iban_generator.php';
 
-// Define variables and initialize with empty values
-$pin = $nuid = "";
-$pin_err = $nuid_err = $stat = $err = "";
+  // Define variables and initialize with empty values
+  $pin = $nuid = "";
+  $pin_err = $nuid_err = $stat = $err = "";
 
-// Processing form data when form is submitted
-if($_SERVER["REQUEST_METHOD"] == "POST"){
+  // Processing form data when form is submitted
+  if($_SERVER["REQUEST_METHOD"] == "POST"){
 
-    // Validate pin
-    if(empty(trim($_POST["pin"]))){
-        $pin_err = "Please enter a pin.";
-    } else{
-        if(strlen($_POST["pin"]) == 4){
-          if(is_numeric($_POST["pin"])){
-              $pin = trim($_POST["pin"]);
+      // Validate pin
+      if(empty(trim($_POST["pin"]))){
+          $pin_err = "Please enter a pin.";
+      } else{
+          if(strlen($_POST["pin"]) == 4){
+            if(is_numeric($_POST["pin"])){
+                $pin = trim($_POST["pin"]);
+            }else{
+                $pin_err = "Please enter numbers as pin";
+            }
           }else{
-              $pin_err = "Please enter numbers as pin";
+                $pin_err = "Please enter a pin of 4 characters.";
           }
-        }else{
-              $pin_err = "Please enter a pin of 4 characters.";
-        }
-    }
+      }
 
-    // Validate nuid
-    if(empty(trim($_POST["nuid"]))){
-        $nuid_err = "Please enter a NUID.";
-    } else{
-        // Prepare a select statement
-        $sql = "SELECT nuid FROM accounts WHERE nuid = ?";
+      // Validate nuid
+      if(empty(trim($_POST["nuid"]))){
+          $nuid_err = "Please enter a NUID.";
+      } else{
+          // Prepare a select statement
+          $sql = "SELECT nuid FROM accounts WHERE nuid = ?";
 
-        if($stmt = mysqli_prepare($link, $sql)){
-            // Bind variables to the prepared statement as parameters
-            mysqli_stmt_bind_param($stmt, "s", $param_nuid);
+          if($stmt = mysqli_prepare($link, $sql)){
+              // Bind variables to the prepared statement as parameters
+              mysqli_stmt_bind_param($stmt, "s", $param_nuid);
 
-            // Set parameters
-            $param_nuid = str_replace(' ', '', htmlspecialchars($_POST['nuid']));
+              // Set parameters
+              $param_nuid = str_replace(' ', '', htmlspecialchars($_POST['nuid']));
 
-            // Attempt to execute the prepared statement
-            if(mysqli_stmt_execute($stmt)){
-                /* store result */
-                mysqli_stmt_store_result($stmt);
+              // Attempt to execute the prepared statement
+              if(mysqli_stmt_execute($stmt)){
+                  /* store result */
+                  mysqli_stmt_store_result($stmt);
 
-                if(mysqli_stmt_num_rows($stmt) == 1){
-                    $nuid_err = "This nuid is already taken.";
-                } else {
-                  if(strlen($param_nuid) == 8){
-                     $nuid = str_replace(' ', '', htmlspecialchars($_POST['nuid']));
+                  if(mysqli_stmt_num_rows($stmt) == 1){
+                      $nuid_err = "This nuid is already taken.";
+                  } else {
+                    if(strlen($param_nuid) == 8){
+                       $nuid = str_replace(' ', '', htmlspecialchars($_POST['nuid']));
+                    }
                   }
-                }
-            } else{
-                $err = "Oops! Something went wrong. Please try again later.";
-            }
-        }
+              } else{
+                  $err = "Oops! Something went wrong. Please try again later.";
+              }
+          }
 
-        // Close statement
-        mysqli_stmt_close($stmt);
-    }
+          // Close statement
+          mysqli_stmt_close($stmt);
+      }
 
-    // Check input errors before inserting in database
-    if(empty($pin_err) && empty($nuid_err)){
-        // Prepare an insert statement
-        $sql = "INSERT INTO accounts (id, iban, nuid, pin) VALUES (?, ?, ?, ?)";
+      // Check input errors before inserting in database
+      if(empty($pin_err) && empty($nuid_err)){
+          // Prepare an insert statement
+          $sql = "INSERT INTO accounts (id, iban, nuid, pin) VALUES (?, ?, ?, ?)";
 
-        if($stmt = mysqli_prepare($link, $sql)){
-            // Bind variables to the prepared statement as parameters
-            mysqli_stmt_bind_param($stmt, "isss", $param_id, $param_iban, $param_nuid, $param_pin);
+          if($stmt = mysqli_prepare($link, $sql)){
+              // Bind variables to the prepared statement as parameters
+              mysqli_stmt_bind_param($stmt, "isss", $param_id, $param_iban, $param_nuid, $param_pin);
 
-            // Set parameters
-            $param_id = $_SESSION['id'];
-            $param_iban = ibanGenerator("SU", "USSR");
-            $param_nuid = $nuid;
-            $param_pin = $pin;
+              // Set parameters
+              $param_id = $_SESSION['id'];
+              $param_iban = ibanGenerator("SU", "USSR");
+              $param_nuid = $nuid;
+              $param_pin = $pin;
 
-            // Attempt to execute the prepared statement
-            if(mysqli_stmt_execute($stmt)){
-                $stat = "Succes!";
-            } else{
-                $err = "Something went wrong. Please try again later. <br />";
-            }
-        }
+              // Attempt to execute the prepared statement
+              if(mysqli_stmt_execute($stmt)){
+                  $stat = "Succes!";
+              } else{
+                  $err = "Something went wrong. Please try again later. <br />";
+              }
+          }
 
-        // Close statement
-        mysqli_stmt_close($stmt);
-    }
-}
+          // Close statement
+          mysqli_stmt_close($stmt);
+      }
+  }
 ?>
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Accounts</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.css">
-    <link rel="stylesheet" href="css/home.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-</head>
-<body>
-  <div class="page-header">
-      <h1>Hi, <b><?php echo htmlspecialchars($_SESSION["username"]); ?></b>.</h1><p class="text-muted">Welcome to the Monarch Douglas Bank</p>
-  </div>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Monarch Douglas Bank</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link href="css/style.css" rel="stylesheet">
+  </head>
+  <body>
+  <?php
+    include 'menu.php';
+  ?>
+  <main role="main">
+    <div class="jumbotron">
+      <div class="container">
+        <h1 class="display-3">Hi, <b><?php echo htmlspecialchars($_SESSION["username"]); ?></b></h1>
+        <p>Welcome to the Monarch Douglas Bank</p>
+      </div>
+    </div>
     <div class="container">
       <div class="row">
           <div class="col-sm-3"></div>
@@ -150,22 +159,21 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
           <div class="col-sm-3"></div>
         </div>
         <div class="row">
-          <div class="center">
-            <p>
-                <a onclick="show_addaccount()" class="btn btn-info">Add bankaccount</a>
-                <a href="" class="btn btn-warning">Disable bankaccount</a>
-                <a onclick="show_delaccount()" class="btn btn-danger">Delete bankaccount</a>
-                <a href="index.php" class="btn btn-info">Home</a>
-            </p>
-          </div>
+            <div class="col-sm-3"></div>
+            <div class="col-sm-6">
+              <p>
+                  <a onclick="show_addaccount()" class="btn btn-info">Add bankaccount</a>
+                  <a href="" class="btn btn-warning">Disable bankaccount</a>
+                  <a onclick="show_delaccount()" class="btn btn-danger">Delete bankaccount</a>
+              </p>
+            </div>
+            <div class="col-sm-3"></div>
         </div>
         <div class="row">
             <div class="center">
               <div id="addaccount">
                 <hr>
-                <div class="col-sm-4"></div>
-                <div class="col-sm-4">
-                  <div class="wrapper" align="left">
+                  <div class="wrapper" align="center">
                       <h2>Add a bankaccount</h2>
                       <p>Please fill in this form to create a bankaccount.</p>
                       <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
@@ -185,17 +193,14 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                       </form>
                   </div>
                 </div>
-                <div class="col-sm-4"></div>
-              </div>
             </div>
         </div>
         <div class="row">
-            <div class="center">
-              <div id="delaccount">
-                <hr>
-                <div class="col-sm-4"></div>
-                <div class="col-sm-4">
-                  <div class="wrapper" align="left">
+          <div id="delaccount">
+            <hr>
+            <div class="col-sm-4"></div>
+            <div class="col-sm-4">
+              <div class="wrapper" align="left">
                       <h2>Delete a bankaccount</h2>
                       <p>Please fill in this form to delete a bankaccount.</p>
                       <form action='functions/deleteacc.php' method='post'><select class='form-control' name='iban'>
@@ -215,12 +220,15 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                         <input type='submit' name='Delete' class='btn btn-danger btn-send' value='Delete'>
                       </form>
                   </div>
-                </div>
-                <div class="col-sm-4"></div>
               </div>
-            </div>
+              <div class="col-sm-4"></div>
+          </div>
         </div>
-      </div>
+      </main>
+      <footer class="container">
+        <hr>
+        <p>&copy; Monarch Douglas Bank 2018-2019</p>
+      </footer>
     </body>
     <script>
       <?php
@@ -255,4 +263,8 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         }
       }
     </script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
 </html>
