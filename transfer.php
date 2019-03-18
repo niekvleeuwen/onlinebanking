@@ -74,28 +74,27 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     $stmt->close();
 
     //we need to make a call to the api here
-    $ch = curl_init();
+    $url = 'https://bank.niekvanleeuwen.nl/api/transfer.php';
+    $data = array('nuid' => $nuid, 'pin' => $pin, 'iban' => $iban, 'amount' => $amount);
 
-    curl_setopt($ch, CURLOPT_URL,"api/transfer.php");
-    curl_setopt($ch, CURLOPT_POST, 1);
-    curl_setopt($ch, CURLOPT_POSTFIELDS,
-                "nuid=$nuid&pin=$pin&amount=$amount&iban=$iban");
+    // use key 'http' even if you send the request to https://...
+    $options = array(
+        'http' => array(
+            'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
+            'method'  => 'POST',
+            'content' => http_build_query($data)
+        )
+    );
+    $context  = stream_context_create($options);
+    $result = file_get_contents($url, false, $context);
+    $json_decoded = json_decode($result);
 
-    // In real life you should use something like:
-    // curl_setopt($ch, CURLOPT_POSTFIELDS,
-    //          http_build_query(array('postvar1' => 'value1')));
-
-    // Receive server response ...
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-    $server_output = curl_exec($ch);
-
-    curl_close ($ch);
-
-    var_dump($server_output);
-
-    /* Further processing ...
-    if ($server_output == "OK") { ... } else { ... } */
+    $status = $json_decoded->status;
+    if($status == 0){
+      $stat = "De overschrijving is voltooid!";
+    }else{
+      $err = $json_decoded->error;
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -111,6 +110,23 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     <div class="page-header">
         <h1>Hi, <b><?php echo htmlspecialchars($_SESSION["username"]); ?></b>.</h1><p class="text-muted">Welcome to the Monarch Douglas Bank</p>
     </div>
+    <div class="row">
+        <div class="col-sm-3"></div>
+        <div class="col-sm-6">
+          <?php
+            if($err){
+              echo("<div class='alert alert-danger' role='alert'>
+                ". $err . "
+              </div>");
+            }
+            if($stat){
+              echo("<div class='alert alert-info' role='alert'>
+                ". $stat . "
+              </div>");
+            }
+          ?>
+        </div>
+      </div>
       <div class="row">
           <div class="center">
             <div id="addaccount">
