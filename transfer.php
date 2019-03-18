@@ -177,10 +177,10 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
           </div>
       </div>
       <br />
+      <hr>
       <div class="row">
         <div class="center">
           <p>
-              <a href="accounts.php" class="btn btn-info">Manage accounts</a>
               <a href="home.php" class="btn btn-info">Home</a>
               <a href="logout.php" class="btn btn-danger">Sign Out of Your Account</a>
           </p>

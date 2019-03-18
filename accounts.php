@@ -107,9 +107,9 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
-    <div class="page-header">
-        <h1>Accounts</h1>
-    </div>
+  <div class="page-header">
+      <h1>Hi, <b><?php echo htmlspecialchars($_SESSION["username"]); ?></b>.</h1><p class="text-muted">Welcome to the Monarch Douglas Bank</p>
+  </div>
     <div class="container">
       <div class="row">
           <div class="col-sm-3"></div>
@@ -149,7 +149,6 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
           </div>
           <div class="col-sm-3"></div>
         </div>
-        <br />
         <div class="row">
           <div class="center">
             <p>
@@ -219,12 +218,6 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                 </div>
                 <div class="col-sm-4"></div>
               </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="center">
-                <hr>
-                <a href="home.php">Back</a>
             </div>
         </div>
       </div>
