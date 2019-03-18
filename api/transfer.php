@@ -10,7 +10,8 @@
     $nuid = str_replace(' ', '', htmlspecialchars($_POST['nuid'])); //remove whitespaces
     $pin = str_replace(' ', '', htmlspecialchars($_POST['pin'])); //remove whitespaces
     $amount = htmlspecialchars($_POST['amount']);
-    $iban_recipient = htmlspecialchars($_POST['iban']);
+    $iban_recipient = htmlspecialchars($_POST['iban_recipient']);
+    $iban_sender = htmlspecialchars($_POST['iban_sender']);
 
     if(isset($nuid) && strlen($nuid) == $nuid_length){
         if(isset($pin) && strlen($pin) == $pin_length){
@@ -18,10 +19,16 @@
             include_once "functions.php";
             if(checkiban($iban_recipient) !== null){
               if(isset($amount)){
-                  //first get the balance and iban from the sender
-                  $data = checksaldo($nuid, $pin, null);
-                  $balance_sender = $data['balance'];
-                  $iban_sender = $data['iban'];
+                  if(isset($iban_sender)){
+                    $data = checksaldo(null, null, $iban_sender);
+                    $balance_sender = $data['balance'];
+                    echo($balance_sender);
+                  }else{
+                    //if the user hasn't sent iban_sender as a parameter we use the nuid and pin
+                    $data = checksaldo($nuid, $pin, null);
+                    $balance_sender = $data['balance'];
+                    $iban_sender = $data['iban'];
+                  }
 
                   //second get the balance from the recipient
                   $data = checksaldo(null, null, $iban_recipient);
