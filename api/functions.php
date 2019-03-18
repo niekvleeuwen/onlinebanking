@@ -50,7 +50,7 @@
           mysqli_stmt_bind_param($stmt, "s", $param_iban);
 
           // Set parameters
-          $param_iban = $_POST['iban'];
+          $param_iban = $iban;
 
           // Attempt to execute the prepared statement
           if(mysqli_stmt_execute($stmt)){
