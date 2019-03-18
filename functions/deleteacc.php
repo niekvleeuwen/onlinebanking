@@ -8,10 +8,8 @@
     }
     // Include config file
     require_once "../config.php";
-    /*STEPS*/
-    //Firts check if account is Empty
-    $iban = "";
-    $err = "";
+    $iban = $stat = $err = "";
+
     // Validate iban
     if(empty(trim($_POST["iban"]))){
         $err = "Please enter a IBAN.";
