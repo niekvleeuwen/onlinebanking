@@ -6,7 +6,8 @@
 
   // Check if the user is logged in, if not then redirect user to login page
   if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
-      header("location: ../index.php");
+      $response = array('status' => '1', 'error' => 'No authorization');
+      echo(json_encode($response));
       exit;
   }
 
