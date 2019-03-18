@@ -12,25 +12,24 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 require_once "config.php";
 
 // Define variables and initialize with empty values
-$pin = $amount = $iban = "";
-$pin_err = $amount_err = $iban_err = $stat = $err = "";
+$pin = $amount = $iban_sender = $iban_recipient = "";
+$pin_err = $amount_err = $iban_recipient_err = $iban_sender_err = $stat = $err = "";
 
 // Processing form data when form is submitted
 if($_SERVER["REQUEST_METHOD"] == "POST"){
 
-    // Validate iban
-    if(empty(trim($_POST["iban"]))){
-        $iban_err = "Please enter a IBAN.";
+    // Validate iban sender
+    if(empty(trim($_POST["iban_sender"]))){
+        $iban_sender_err = "Please enter a IBAN.";
     } else{
-      $iban = $_POST['iban']; //iban will be checked in api call
-      /*
-        include_once "api/functions.php";
-        if(checkiban($_POST["iban"]) !== null){
-          $iban = $_POST['iban'];
-        }else{
-          $iban_err = "Iban is not valid";
-        }
-      */
+      $iban_sender = $_POST['iban_sender']; //iban will be checked in api call
+    }
+
+    // Validate iban recipient
+    if(empty(trim($_POST["iban_recipient"]))){
+        $iban_recipient_err = "Please enter a IBAN.";
+    } else{
+      $iban_recipient = $_POST['iban_recipient']; //iban will be checked in api call
     }
 
     // Validate amount
@@ -75,7 +74,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
     //we need to make a call to the api here
     $url = 'https://bank.niekvanleeuwen.nl/api/transfer.php';
-    $data = array('nuid' => $nuid, 'pin' => $pin, 'iban' => $iban, 'amount' => $amount);
+    $data = array('nuid' => $nuid, 'pin' => $pin, 'iban_sender' => $iban_sender, 'iban_recipient' => $iban_recipient , 'amount' => $amount);
 
     // use key 'http' even if you send the request to https://...
     $options = array(
@@ -136,10 +135,26 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                     <h2>Transfer Money</h2>
                     <p>Please fill in this form to tranfer money.</p>
                     <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
-                        <div class="form-group <?php echo (!empty($iban_err)) ? 'has-error' : ''; ?>">
-                            <label>IBAN</label>
-                            <input type="text" name="iban" class="form-control" value="<?php echo $iban; ?>">
-                            <span class="help-block"><?php echo $iban_err; ?></span>
+                      <div class="form-group <?php echo (!empty($iban_sender_err)) ? 'has-error' : ''; ?>">
+                          <label>Account</label>
+                          <?php
+                              echo("<select class='form-control' name='iban_sender'>");
+                              $sql = "SELECT iban FROM accounts WHERE id IN (SELECT id FROM users WHERE id = '" . $_SESSION['id'] . "') ";
+                              $result = mysqli_query($link, $sql);
+
+                              while($row = mysqli_fetch_array($result)){
+                                  echo("<option value='" . $row['iban'] . "'>" . $row['iban'] . "</option>");
+                              }
+                              echo("</select>");
+
+                              mysqli_close($link);
+                          ?>
+                          <span class="help-block"><?php echo $iban_sender_err; ?></span>
+                        </div>
+                        <div class="form-group <?php echo (!empty($iban_recipient_err)) ? 'has-error' : ''; ?>">
+                            <label>IBAN Recipient</label>
+                            <input type="text" name="iban_recipient" class="form-control" value="<?php echo $iban_recipient; ?>">
+                            <span class="help-block"><?php echo $iban_recipient_err; ?></span>
                         </div>
                         <div class="form-group <?php echo (!empty($amount_err)) ? 'has-error' : ''; ?>">
                             <label>Amount</label>
