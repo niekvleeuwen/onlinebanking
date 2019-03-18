@@ -53,7 +53,7 @@
               $response = array('status' => '1', 'error' => 'Iban not recognised.');
             }
           }else{
-              $response = array('status' => '1', 'error' => 'PIN not entered or correct.');
+              $response = array('status' => '1', 'error' => 'Iban not entered or correct.');
           }
         }else{
             $response = array('status' => '1', 'error' => 'PIN not entered or correct.');
