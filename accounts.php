@@ -201,7 +201,6 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                       <p>Please fill in this form to delete a bankaccount.</p>
                       <form action='functions/deleteacc.php' method='post'><select class='form-control' name='iban'>
                         <?php
-
                             //verkrijg de informatie uit de tabel
                             $sql = "SELECT iban, balance FROM accounts WHERE id IN (SELECT id FROM users WHERE id = '" . $_SESSION['id'] . "') ";
                             $result = mysqli_query($link, $sql);
