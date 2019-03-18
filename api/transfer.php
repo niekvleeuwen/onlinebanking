@@ -22,7 +22,6 @@
                   if(isset($iban_sender)){
                     $data = checksaldo(null, null, $iban_sender);
                     $balance_sender = $data['balance'];
-                    echo($balance_sender);
                   }else{
                     //if the user hasn't sent iban_sender as a parameter we use the nuid and pin
                     $data = checksaldo($nuid, $pin, null);
