@@ -23,12 +23,12 @@
       if(isset($pin) && strlen($pin) == $pin_length){
           include '../functions/iban_generator.php';
 
-          //first get the balance and id from the user
+          //Add the bankaccount to the table 'accounts'
           $sql = "INSERT INTO accounts (id, iban, nuid, pin) VALUES (?, ?, ?, ?)";
           $stmt->bind_param("isss", $param_id, $param_iban, $param_nuid, $param_pin);
 
           $param_id = $_SESSION['id'];
-          $param_iban = ibanGenerator("MD", "USSR");
+          $param_iban = ibanGenerator("MD", "USSR"); //generate a IBAN
           $param_nuid = $nuid;
           $param_pin = $pin;
 
