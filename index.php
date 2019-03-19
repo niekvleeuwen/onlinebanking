@@ -19,7 +19,7 @@
           <div class="container">
             <h1 class="display-3">Monarch Douglas Bank</h1>
             <p>The Monarch Douglas Bank is the international bank for criminals</p>
-            <p><a class="btn btn-primary btn-lg" href="#" role="button">Open your account now! &raquo;</a></p>
+            <p><a class="btn btn-primary btn-lg" href="accounts.php" role="button">Open your account now! &raquo;</a></p>
           </div>
         </div>
         <div class="container">
