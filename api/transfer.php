@@ -20,7 +20,7 @@
             if(checkiban($iban_recipient) !== null){
               if(isset($amount)){
                   if(isset($iban_sender)){
-                    $data = checksaldo(null, null, $iban_sender);
+                    $data = checksaldo(null, $pin, $iban_sender);
                     $balance_sender = $data['balance'];
                   }else{
                     //if the user hasn't sent iban_sender as a parameter we use the nuid and pin
@@ -30,7 +30,7 @@
                   }
 
                   //second get the balance from the recipient
-                  $data = checksaldo(null, null, $iban_recipient);
+                  $data = checksaldo(null, $pin, $iban_recipient);
                   $balance_recipient = $data['balance'];
 
                   //chek if balance is enough to withdraw amount
