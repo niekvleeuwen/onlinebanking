@@ -71,29 +71,8 @@
       $stmt->bind_result($pin, $nuid);
       $stmt->fetch();
       $stmt->close();
-
+      
       //we need to make a call to the api here
-      $url = 'https://bank.niekvanleeuwen.nl/api/transfer.php';
-      $data = array('nuid' => $nuid, 'pin' => $pin, 'iban_sender' => $iban_sender, 'iban_recipient' => $iban_recipient , 'amount' => $amount);
-
-      // use key 'http' even if you send the request to https://...
-      $options = array(
-          'http' => array(
-              'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
-              'method'  => 'POST',
-              'content' => http_build_query($data)
-          )
-      );
-      $context  = stream_context_create($options);
-      $result = file_get_contents($url, false, $context);
-      $json_decoded = json_decode($result);
-
-      $status = $json_decoded->status;
-      if($status == 0){
-        $stat = "De overschrijving is voltooid!";
-      }else{
-        $err = $json_decoded->error;
-      }
   }
 ?>
 <!doctype html>
