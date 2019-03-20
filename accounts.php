@@ -158,55 +158,46 @@
           </div>
           <div class="col-sm-3"></div>
         </div>
-        <div class="row">
-            <div class="col-sm-3"></div>
-            <div class="col-sm-6">
-                <a onclick="show_addaccount()" class="btn btn-info" role="button">Add bankaccount</a>
-                <a href="" class="btn btn-warning" role="button">Disable bankaccount</a>
-                <a onclick="show_delaccount()" class="btn btn-danger" role="button">Delete bankaccount</a>
-            </div>
-            <div class="col-sm-3"></div>
-        </div>
         <div class="row" id="addaccount">
             <hr>
             <h2>Add a bankaccount</h2>
             <p>Please fill in this form to create a bankaccount.</p>
             <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
-                          <div class="form-group <?php echo (!empty($pin_err)) ? 'has-error' : ''; ?>">
-                              <label>PIN</label>
-                              <input type="text" maxlength="4" name="pin" class="form-control" value="<?php echo $pin; ?>">
-                              <span class="help-block"><?php echo $pin_err; ?></span>
-                          </div>
-                          <div class="form-group <?php echo (!empty($nuid_err)) ? 'has-error' : ''; ?>">
-                              <label>NUID</label>
-                              <input type="text" name="nuid" class="form-control" value="<?php echo $nuid; ?>">
-                              <span class="help-block"><?php echo $nuid_err; ?></span>
-                          </div>
-                          <div class="form-group">
-                              <input type="submit" class="btn btn-primary" value="Submit">
-                          </div>
-                      </form>
+              <div class="form-group <?php echo (!empty($pin_err)) ? 'has-error' : ''; ?>">
+                  <label>PIN</label>
+                  <input type="text" maxlength="4" name="pin" class="form-control" value="<?php echo $pin; ?>">
+                  <span class="help-block"><?php echo $pin_err; ?></span>
+              </div>
+              <div class="form-group <?php echo (!empty($nuid_err)) ? 'has-error' : ''; ?>">
+                  <label>NUID</label>
+                  <input type="text" name="nuid" class="form-control" value="<?php echo $nuid; ?>">
+                  <span class="help-block"><?php echo $nuid_err; ?></span>
+              </div>
+              <div class="form-group">
+                  <input type="submit" class="btn btn-primary" value="Submit">
+              </div>
+          </form>
         </div>
         <div class="row" id="delaccount" >
             <hr>
-                      <h2>Delete a bankaccount</h2>
-                      <p>Please fill in this form to delete a bankaccount.</p>
-                      <form action='functions/deleteacc.php' method='post'><select class='form-control' name='iban'>
-                        <?php
-                            //verkrijg de informatie uit de tabel
-                            $sql = "SELECT iban, balance FROM accounts WHERE id IN (SELECT id FROM users WHERE id = '" . $_SESSION['id'] . "') ";
-                            $result = mysqli_query($link, $sql);
+            <h2>Delete a bankaccount</h2>
+            <p>Please fill in this form to delete a bankaccount.</p>
+            <form action='functions/deleteacc.php' method='post'><select class='form-control' name='iban'>
+              <?php
+                  //verkrijg de informatie uit de tabel
+                  $sql = "SELECT iban, balance FROM accounts WHERE id IN (SELECT id FROM users WHERE id = '" . $_SESSION['id'] . "') ";
+                  $result = mysqli_query($link, $sql);
 
-                            while($row = mysqli_fetch_array($result)){
-                                echo("<option value='" . $row['iban'] . "'>" . $row['iban'] . "</option>");
-                            }
-                            echo("</select>");
+                  while($row = mysqli_fetch_array($result)){
+                    echo("<option value='" . $row['iban'] . "'>" . $row['iban'] . "</option>");
+                  }
+                  echo("</select>");
 
-                            mysqli_close($link);
-                        ?>
-                        <br><br>
-                        <input type='submit' name='Delete' class='btn btn-danger btn-send' value='Delete'>
-                      </form>
+                  mysqli_close($link);
+              ?>
+            <br><br>
+            <input type='submit' name='Delete' class='btn btn-danger btn-send' value='Delete'>
+          </form>
         </div>
       </div>
       </main>
