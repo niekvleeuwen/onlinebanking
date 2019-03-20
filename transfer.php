@@ -58,21 +58,28 @@
           }
       }
 
-      //user is already logged in (so the user is verified and has authorization) so we need to get the pin and nuid of the current user for the api call
-      $stmt = $link->prepare("SELECT pin, nuid FROM accounts WHERE id = ?");
-      $stmt->bind_param("s", $param_id,);
-      $param_id = $_SESSION["id"];
+      require_once "api/functions.php";
+      //get the users balance
+      $data = checksaldo(null, $pin, $iban_sender);
+      $balance_sender = $data['balance'];
 
-      if (!$stmt->execute()) {
-          echo("Oops! Something went wrong. Please try again later.");
-          exit();
+      if(isset($balance_sender)){
+        if($amount <= $balance_sender){ //check if the balance is sufficient to transfer the amount
+          if(update_saldo($balance_sender - $amount, $iban_sender) !== null){ //insert the new balance of the sender
+              if(add_saldo($amount, $iban_recipient) !== null){ //insert the new balance of the recipient
+                  $stat = "The transfer is complete";
+              }else{
+                $err = "Oops! Something went wrong. Please try again later.";
+              }
+          }else{
+              $err = "Oops! Something went wrong. Please try again later.";
+          }
+        }else{
+          $err = "Not enough funds to withdraw.";
+        }
+      }else{
+          $err = "Pin not correct.";
       }
-
-      $stmt->bind_result($pin, $nuid);
-      $stmt->fetch();
-      $stmt->close();
-      
-      //we need to make a call to the api here
   }
 ?>
 <!doctype html>

@@ -1,7 +1,7 @@
 <?php
     //this function is used to update the saldo of the iban to the balance given as paramater
     function update_saldo($balance, $iban){
-        require "../config.php";
+        require "config.php";
         $sql = "UPDATE accounts SET balance = $balance WHERE iban = '$iban'";
 
         if ($link->query($sql) === TRUE) {
@@ -13,7 +13,7 @@
 
     //this function is used to add a amount to the IBAN given as a paramter
     function add_saldo($amount, $iban){
-      require "../config.php";
+      require "config.php";
 
       //prepare and bind
       $stmt = $link->prepare("SELECT balance, iban FROM accounts WHERE iban = ?");
@@ -42,7 +42,7 @@
 
     //this function is used to get the balance from a user using the pin and a IBAN or NUID
     function checksaldo($nuid, $pin, $iban){
-        require "../config.php";
+        require "config.php";
 
         //prepare and bind
         if(isset($iban)){
