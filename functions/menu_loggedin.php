@@ -1,9 +1,9 @@
 <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
   <a class="navbar-brand" href="index.php">MD Bank</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" aria-expanded="false" aria-label="Toggle navigation">
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
-  <div class="collapse navbar-collapse" >
+  <div class="collapse navbar-collapse" id="navbar">
     <ul class="navbar-nav mr-auto">
       <li class="nav-item">
         <a class="nav-link" href="transfer.php">Transfer</a>
