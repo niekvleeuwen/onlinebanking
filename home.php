@@ -61,16 +61,6 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
           <div class="col-sm-3"></div>
         </div>
         <br />
-        <div class="row">
-          <div class="col-sm-2"></div>
-          <div class="col-sm-8" align='center'>
-                <a href="accounts.php" class="btn btn-info" role="button">Manage accounts</a>
-                <a href="transfer.php" class="btn btn-info" role="button">Transfer</a>
-                <a href="reset-password.php" class="btn btn-secondary" role="button">Change your Password</a>
-                <a href="logout.php" class="btn btn-danger" role="button">Sign Out of Your Account</a>
-          </div>
-          <div class="col-sm-2"></div>
-        </div>
       </main>
     </body>
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
