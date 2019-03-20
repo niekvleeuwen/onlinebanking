@@ -161,22 +161,17 @@
         <div class="row">
             <div class="col-sm-3"></div>
             <div class="col-sm-6">
-              <p>
-                  <a onclick="show_addaccount()" class="btn btn-info">Add bankaccount</a>
-                  <a href="" class="btn btn-warning">Disable bankaccount</a>
-                  <a onclick="show_delaccount()" class="btn btn-danger">Delete bankaccount</a>
-              </p>
+                <a onclick="show_addaccount()" class="btn btn-info" role="button">Add bankaccount</a>
+                <a href="" class="btn btn-warning" role="button">Disable bankaccount</a>
+                <a onclick="show_delaccount()" class="btn btn-danger" role="button">Delete bankaccount</a>
             </div>
             <div class="col-sm-3"></div>
         </div>
-        <div class="row">
-            <div class="center">
-              <div id="addaccount">
-                <hr>
-                  <div class="wrapper" align="center">
-                      <h2>Add a bankaccount</h2>
-                      <p>Please fill in this form to create a bankaccount.</p>
-                      <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
+        <div class="row" id="addaccount">
+            <hr>
+            <h2>Add a bankaccount</h2>
+            <p>Please fill in this form to create a bankaccount.</p>
+            <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
                           <div class="form-group <?php echo (!empty($pin_err)) ? 'has-error' : ''; ?>">
                               <label>PIN</label>
                               <input type="text" maxlength="4" name="pin" class="form-control" value="<?php echo $pin; ?>">
@@ -191,16 +186,9 @@
                               <input type="submit" class="btn btn-primary" value="Submit">
                           </div>
                       </form>
-                  </div>
-                </div>
-            </div>
         </div>
-        <div class="row">
-          <div id="delaccount">
+        <div class="row" id="delaccount" >
             <hr>
-            <div class="col-sm-4"></div>
-            <div class="col-sm-4">
-              <div class="wrapper" align="left">
                       <h2>Delete a bankaccount</h2>
                       <p>Please fill in this form to delete a bankaccount.</p>
                       <form action='functions/deleteacc.php' method='post'><select class='form-control' name='iban'>
@@ -219,11 +207,8 @@
                         <br><br>
                         <input type='submit' name='Delete' class='btn btn-danger btn-send' value='Delete'>
                       </form>
-                  </div>
-              </div>
-              <div class="col-sm-4"></div>
-          </div>
         </div>
+      </div>
       </main>
       <footer class="container">
         <hr>

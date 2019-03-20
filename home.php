@@ -64,12 +64,10 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
         <div class="row">
           <div class="col-sm-2"></div>
           <div class="col-sm-8" align='center'>
-            <p>
-                <a href="accounts.php" class="btn btn-info">Manage accounts</a>
-                <a href="transfer.php" class="btn btn-info">Transfer</a>
-                <a href="reset-password.php" class="btn btn-warning">Change your Password</a>
-                <a href="logout.php" class="btn btn-danger">Sign Out of Your Account</a>
-            </p>
+                <a href="accounts.php" class="btn btn-info" role="button">Manage accounts</a>
+                <a href="transfer.php" class="btn btn-info" role="button">Transfer</a>
+                <a href="reset-password.php" class="btn btn-secondary" role="button">Change your Password</a>
+                <a href="logout.php" class="btn btn-danger" role="button">Sign Out of Your Account</a>
           </div>
           <div class="col-sm-2"></div>
         </div>
