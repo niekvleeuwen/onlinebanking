@@ -74,7 +74,7 @@
 
     //this function is used to check if a IBAN is valid
     function checkiban($iban){
-        require "../config.php";
+        require "config.php";
         // Prepare a select statement
         $sql = "SELECT iban FROM accounts WHERE iban = ?";
 
@@ -101,5 +101,30 @@
 
         // Close statement
         mysqli_stmt_close($stmt);
+    }
+
+    //this function is used to insert a transaction record in the transaction mysql_list_tables
+    function transaction($iban_sender, $iban_recipient, $amount, $location){
+      require "config.php";
+      // Prepare an insert statement
+      $sql = "INSERT INTO transactions (iban_sender, iban_recipient, amount, location) VALUES (?, ?, ?, ?)";
+      if($stmt = mysqli_prepare($link, $sql)){
+          // Bind variables to the prepared statement as parameters
+          mysqli_stmt_bind_param($stmt, "ssis", $param_iban_seneder, $param_iban_recipient, $param_amount, $param_location);
+          // Set parameters
+          $param_iban_seneder = $iban_sender;
+          $param_iban_recipient = $iban_recipient;
+          $param_amount = $amount;
+          $param_location = $location;
+          // Attempt to execute the prepared statement
+          if(mysqli_stmt_execute($stmt)){
+              return true;
+          } else{
+              return null;
+          }
+      }
+
+      mysqli_stmt_close($stmt);
+      mysqli_close($link);
     }
 ?>

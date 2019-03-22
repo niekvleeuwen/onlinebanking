@@ -67,7 +67,11 @@
         if($amount <= $balance_sender){ //check if the balance is sufficient to transfer the amount
           if(update_saldo($balance_sender - $amount, $iban_sender) !== null){ //insert the new balance of the sender
               if(add_saldo($amount, $iban_recipient) !== null){ //insert the new balance of the recipient
-                  $stat = "The transfer is complete";
+                  if(transaction($iban_sender, $iban_recipient, $amount, "Online Banking") !== null){ //insert the transaction record in the database
+                    $stat = "The transfer is complete";
+                  }else{
+                    $stat = "The transfer is complete, but isn't logged! Contact customer support please.";
+                  }
               }else{
                 $err = "Oops! Something went wrong. Please try again later.";
               }
