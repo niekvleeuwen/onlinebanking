@@ -46,8 +46,9 @@ CREATE TABLE  `transactions` (
   `iban_sender` VARCHAR(14) NOT NULL ,
   `iban_recipient` VARCHAR(14) NULL ,
   `amount` int(11) NULL ,
+  `location` VARCHAR(100) NULL ,
   `timestamp` DATETIME DEFAULT CURRENT_TIMESTAMP ,
-  PRIMARY KEY (`transaction_id`),
+  PRIMARY KEY (`transaction_id`)
 )
 ENGINE = INNODB
 CHARSET = utf8
