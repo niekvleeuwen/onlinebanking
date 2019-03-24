@@ -90,6 +90,8 @@
               } else{
                   $err = "Something went wrong. Please try again later. <br />";
               }
+          }else{
+            $err = "Something went wrong. Please try again later. <br />";
           }
 
           // Close statement
