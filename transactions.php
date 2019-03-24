@@ -54,12 +54,17 @@
                                     <th>Recipient</th>
                                 </tr>";
                       while($row = $result->fetch_assoc()) {
-                          echo "<tr>
+                          echo("<tr>
                                     <td>- ".$row["amount"]."</td>
                                     <td>".$row["timestamp"]."</td>
                                     <td>".$row["location"]."</td>
-                                    <td>".$row["iban_recipient"]."</td>
-                                </tr>";
+                                    <td>");
+                                    if(isset($row["iban_recipient"])){
+                                        echo($row["iban_recipient"]);
+                                      }else{
+                                        echo("Withdraw");
+                                    }
+                                    echo("</td></tr>");
                       }
                       echo "</table>";
                   } else {
