@@ -145,11 +145,23 @@
                   echo "<table class='table'><thead>
                         <tr>
                           <th scope='col'>IBAN</th>
+                          <th scope='col'></th>
                           <th scope='col'>Balance</th>
                         </tr>
                       </thead><tbody>"; // start a table tag in the HTML
                   while($row = mysqli_fetch_assoc($result)) {
-                      echo "<tr><td>" . $row['iban'] . "</td><td>€" . $row['balance'] . "</td></tr>";
+                    echo "<tr>
+                              <td>" . $row['iban'] ."</td>
+                              <td>
+                                    <form action='transactions.php' method='POST'>
+                                        <input type='hidden' name='iban' value='" . $row['iban'] ."'>
+                                        <input class='btn btn-primary' type='submit' value='More >>'>
+                                    </form>
+                              </td>
+                              <td>
+                                  €" . $row['balance'] . "
+                              </td>
+                          </tr>";
                   }
 
                   echo "</tbody></table>"; //Close the table in HTML

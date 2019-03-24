@@ -15,6 +15,7 @@
         <a class="nav-link dropdown-toggle" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">My account</a>
         <div class="dropdown-menu" aria-labelledby="dropdown01">
           <a class="dropdown-item" href="home.php">Home</a>
+          <a class="dropdown-item" href="transactions.php">Transactions</a>
           <a class="dropdown-item" href="reset-password.php">Change password</a>
           <div class="dropdown-divider"></div>
           <a class="dropdown-item" href="logout.php">Log out</a>
