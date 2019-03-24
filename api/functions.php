@@ -106,7 +106,6 @@
     //this function is used to insert a transaction record in the transaction mysql_list_tables
     function transaction($iban_sender, $iban_recipient, $amount, $location){
       require "config.php";
-      // Prepare an insert statement
       $sql = "INSERT INTO transactions (iban_sender, iban_recipient, amount, location) VALUES (?, ?, ?, ?)";
       if($stmt = mysqli_prepare($link, $sql)){
           // Bind variables to the prepared statement as parameters

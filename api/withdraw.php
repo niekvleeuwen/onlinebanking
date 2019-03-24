@@ -6,9 +6,19 @@
     $nuid_length = 8;
     $pin_length = 4;
 
+    $_POST['nuid'] = "B8C5E3K8";
+    $_POST['pin'] = "1111";
+    $_POST['amount'] = 10;
+
     $nuid = str_replace(' ', '', htmlspecialchars($_POST['nuid'])); //remove whitespaces
     $pin = str_replace(' ', '', htmlspecialchars($_POST['pin'])); //remove whitespaces
     $amount = htmlspecialchars($_POST['amount']);
+    //check if a location is available, otherwise set the location to unkown
+    if(isset($location)){
+        $location = htmlspecialchars($_POST['location']);
+    }else{
+        $location = "Unkown";
+    }
 
     if(isset($nuid) && strlen($nuid) == $nuid_length){
         if(isset($pin) && strlen($pin) == $pin_length){
@@ -24,6 +34,7 @@
                 if($amount <= $balance){
                   //insert the new balance
                   if(update_saldo($balance - $amount, $iban) !== null){
+                    transaction($iban, null, $amount, $location);
                     $response = array('status' => '0', 'amount' => $amount); //sent amount back for conformation
                   }else{
                     $response = array('status' => '1', 'error' => 'Oops! Something went wrong. Please try again later.');
