@@ -167,6 +167,6 @@ If something goes wrong, status is set to `1`. `error` contains the error messag
 ```json
 {
   status: "0"
-  error : "A useful error message"
+  error: "A useful error message"
 }
 ```
