@@ -95,8 +95,6 @@ If something goes wrong, status is set to `1`. `error` contains the error messag
 
 ### Withdraw money
 
-The API respones with a status and amount.
-
 This call requires the following:
 
 1. `nuid` You can get the nuid from the card.
@@ -127,7 +125,7 @@ If something goes wrong, status is set to `1`. `error` contains the error messag
 ```json
 {
   status: "0"
-  error : "A useful error message"
+  error: "A useful error message"
 }
 ```
 
