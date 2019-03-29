@@ -55,3 +55,120 @@ CHARSET = utf8
 COLLATE utf8_bin
 COMMENT =  'This table is meant to keep track of al the transactions.'
 ```
+
+### Check saldo
+
+This call requires the following:
+
+1. `nuid` You can get the nuid from the card.
+2. `pin` This should be 4 numbers.
+
+#### Request
+
+The request should be made to `checksaldo.php`.
+
+#### Response
+
+The API respones with a status and balance.
+
+##### Success
+
+When your call is succesful, the respone is like this:
+
+```json
+{
+  status: "0"
+  balance: 10
+}
+```
+
+##### Error
+
+If something goes wrong, status is set to `1`. `error` contains the error message.
+
+```json
+{
+  status: "1"
+  error : "A useful error message"
+}
+```
+
+### Withdraw money
+
+The API respones with a status and amount.
+
+This call requires the following:
+
+1. `nuid` You can get the nuid from the card.
+2. `pin` This should be 4 numbers.
+3. `amount` This amount will be withdrawn.
+
+#### Request
+
+The request should be made to `withdraw.php`.
+
+#### Response
+
+The result is the balance after the transfer and a saldo. If the status is `0` the call has succeeded.
+
+##### Success
+
+```json
+{
+  status: "0"
+  balance: 10
+}
+```
+
+##### Error
+
+If something goes wrong, status is set to `1`. `error` contains the error message.
+
+```json
+{
+  status: "0"
+  error : "A useful error message"
+}
+```
+
+### Transfer money
+
+The API respones with a status and amount.
+
+This call requires the following:
+
+1. `nuid` You can get the nuid from the card.
+2. `pin` This should be 4 numbers.
+3. `amount` This amount will be withdrawn.
+3. `iban` The IBAN of the recipient.
+
+#### Request
+
+The request should be made to `transfer.php`.
+
+#### Response
+
+The result is the balance after the transfer,a saldo and the IBAN of the recipient. If the status is `0` the call has succeeded.
+
+##### Success
+
+The response will contain a `balance` if your transfer succeeded.
+
+```json
+{
+  status: "0"
+  balance: 10
+  iban: "The IBAN of the recipient"
+}
+```
+
+##### Error
+
+If something goes wrong, status is set to `1`. `error` contains the error message.
+
+```json
+{
+  status: "0"
+  error : "A useful error message"
+}
+```
