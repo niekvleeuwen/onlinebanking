@@ -6,10 +6,6 @@
     $nuid_length = 8;
     $pin_length = 4;
 
-    $_POST['nuid'] = "B8C5E3K8";
-    $_POST['pin'] = "1111";
-    $_POST['amount'] = 10;
-
     $nuid = str_replace(' ', '', htmlspecialchars($_POST['nuid'])); //remove whitespaces
     $pin = str_replace(' ', '', htmlspecialchars($_POST['pin'])); //remove whitespaces
     $amount = htmlspecialchars($_POST['amount']);
@@ -33,9 +29,10 @@
               if(isset($balance)){
                 if($amount <= $balance){
                   //insert the new balance
-                  if(update_saldo($balance - $amount, $iban) !== null){
+                  $new_balance = $balance - $amount
+                  if(update_saldo($new_balance, $iban) !== null){
                     transaction($iban, null, $amount, $location);
-                    $response = array('status' => '0', 'amount' => $amount); //sent amount back for conformation
+                    $response = array('status' => '0', 'balance' => $new_balance); //sent amount back for conformation
                   }else{
                     $response = array('status' => '1', 'error' => 'Oops! Something went wrong. Please try again later.');
                   }

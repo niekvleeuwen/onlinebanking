@@ -7,17 +7,11 @@
     $pin_length = 4;
     $iban_length = 14;
 
-    $_POST['nuid'] = "B8C5E3K8";
-    $_POST['pin'] = "1111";
-    $_POST['amount'] = 10;
-    $_POST['iban_recipient'] = "SU95USSR909335";
-    $_POST['iban_sender'] = "SU66USSR721677";
-
     $nuid = str_replace(' ', '', htmlspecialchars($_POST['nuid'])); //remove whitespaces
     $pin = str_replace(' ', '', htmlspecialchars($_POST['pin'])); //remove whitespaces
     $amount = htmlspecialchars($_POST['amount']);
     $iban_recipient = htmlspecialchars($_POST['iban_recipient']);
-    
+
     //check if a location is available, otherwise set the location to unkown
     if(isset($location)){
         $location = htmlspecialchars($_POST['location']);

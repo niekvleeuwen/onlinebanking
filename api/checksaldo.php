@@ -8,7 +8,7 @@
 
     if(isset($nuid) && strlen($nuid) == $nuid_length){
         if(isset($pin) && strlen($pin) == $pin_length){
-            require_once "../api/functions.php";
+            require_once "functions.php";
             $data = checksaldo($nuid, $pin, null);
             $balance = $data['balance'];
             if(isset($balance)){
