@@ -72,6 +72,75 @@
         return array('balance' => $balance, 'iban' => $iban);
     }
 
+    //this function is used to get the balance from a user using the pin and a IBAN or NUID
+    function get_pin_attempts($nuid){
+        require "config.php";
+
+        $stmt = $link->prepare("SELECT pin_attempts FROM accounts WHERE nuid = ?");
+        $stmt->bind_param("s", $param_nuid);
+        $param_nuid = $nuid;
+
+        if (!$stmt->execute()) {
+            echo(json_encode(array('status' => '1', 'error' => 'Oops! Something went wrong. Please try again later.')));
+            exit();
+        }
+
+        $stmt->bind_result($pin_attempts);
+        $stmt->fetch();
+        $stmt->close();
+
+        return $pin_attempts;
+    }
+
+
+    function checkpin($nuid, $pin){
+      require "config.php";
+      //check pin
+      $stmt = $link->prepare("SELECT pin_attempts FROM accounts WHERE nuid = ? AND pin = ?");
+      $stmt->bind_param("ss", $param_nuid, $param_pin);
+      $param_nuid = $nuid;
+      $param_pin = $pin;
+
+      if (!$stmt->execute()) {
+          echo(json_encode(array('status' => '1', 'error' => 'Oops! Something went wrong. Please try again later.')));
+          exit();
+      }
+
+      $stmt->bind_result($pin_attempts);
+      $stmt->fetch();
+      $stmt->close();
+
+      if($pin_attempts > 2){
+        echo(json_encode(array('status' => '1', 'error' => 'Card is blocked')));
+        exit();
+      }
+
+      return $pin_attempts;
+    }
+
+    function reset_pin_attempts($nuid){
+      require "config.php";
+      //set pin attempts to zero
+      $sql = "UPDATE accounts SET pin_attempts = 0 WHERE nuid = '$nuid'";
+
+      if ($link->query($sql) === TRUE) {
+          return 1;
+      } else {
+          return null;
+      }
+    }
+
+    function add_pin_attempt($nuid){
+      require "config.php";
+      $sql = "UPDATE accounts SET pin_attempts = pin_attempts + 1 WHERE nuid = '$nuid'";
+
+      if ($link->query($sql) === TRUE) {
+          return 1;
+      } else {
+          return null;
+      }
+    }
+
     //this function is used to check if a IBAN is valid
     function checkiban($iban){
         require "config.php";
