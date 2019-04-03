@@ -41,7 +41,7 @@
               if(isset($_POST['iban'])){
                 if(strlen($_POST['iban']) == 14){
 
-                  $sql = "SELECT * FROM transactions WHERE iban_sender IN (SELECT iban FROM accounts WHERE id = " . $_SESSION['id'] . " AND iban = '" . $_POST['iban'] . "')";
+                  $sql = "SELECT * FROM transactions WHERE iban_sender IN (SELECT iban FROM accounts WHERE id = " . $_SESSION['id'] . " AND iban = '" . $_POST['iban'] . "') ORDER BY timestamp DESC";
                   $result = $link->query($sql);
 
                   if ($result->num_rows > 0) {
@@ -73,7 +73,7 @@
 
 
 
-                  $sql = "SELECT * FROM transactions WHERE iban_recipient IN (SELECT iban FROM accounts WHERE id = " . $_SESSION['id'] . " AND iban = '" . $_POST['iban'] . "')";
+                  $sql = "SELECT * FROM transactions WHERE iban_recipient IN (SELECT iban FROM accounts WHERE id = " . $_SESSION['id'] . " AND iban = '" . $_POST['iban'] . "') ORDER BY timestamp DESC";
                   $result = $link->query($sql);
 
                   if ($result->num_rows > 0) {
