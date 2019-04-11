@@ -110,11 +110,10 @@
       $stmt->fetch();
       $stmt->close();
 
-      if($pin_attempts > 2){
-        echo(json_encode(array('status' => '1', 'error' => 'Card is blocked')));
-        exit();
+      //set pin_attempts to null if pin is succesfull
+      if(isset($pin_attempts)){
+          //set pin attempts to zero
       }
-
       return $pin_attempts;
     }
 
