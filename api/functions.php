@@ -109,11 +109,6 @@
       $stmt->bind_result($pin_attempts);
       $stmt->fetch();
       $stmt->close();
-
-      //set pin_attempts to null if pin is succesfull
-      if(isset($pin_attempts)){
-          //set pin attempts to zero
-      }
       return $pin_attempts;
     }
 
