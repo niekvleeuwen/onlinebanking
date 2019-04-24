@@ -9,10 +9,9 @@
     $nuid = str_replace(' ', '', htmlspecialchars($_POST['nuid'])); //remove whitespaces
     $pin = str_replace(' ', '', htmlspecialchars($_POST['pin'])); //remove whitespaces
     $amount = htmlspecialchars($_POST['amount']);
+    $location = htmlspecialchars($_POST['location']);
     //check if a location is available, otherwise set the location to unkown
-    if(isset($location)){
-        $location = htmlspecialchars($_POST['location']);
-    }else{
+    if(!isset($location)){
         $location = "Unkown";
     }
 
