@@ -72,7 +72,7 @@
         return array('balance' => $balance, 'iban' => $iban);
     }
 
-    function checkcard($card){
+    function checkcard($nuid){
       require "config.php";
       // Prepare a select statement
       $sql = "SELECT nuid FROM accounts WHERE nuid = ?";
