@@ -28,7 +28,7 @@
               if(isset($balance)){
                 if($amount <= $balance){
                   //insert the new balance
-                  $new_balance = $balance - $amount
+                  $new_balance = $balance - $amount;
                   if(update_saldo($new_balance, $iban) !== null){
                     transaction($iban, null, $amount, $location);
                     $response = array('status' => '0', 'balance' => $new_balance); //sent amount back for conformation
