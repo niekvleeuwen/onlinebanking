@@ -72,6 +72,36 @@
         return array('balance' => $balance, 'iban' => $iban);
     }
 
+    function checkcard($card){
+      require "config.php";
+      // Prepare a select statement
+      $sql = "SELECT nuid FROM accounts WHERE nuid = ?";
+
+      if($stmt = mysqli_prepare($link, $sql)){
+          // Bind variables to the prepared statement as parameters
+          mysqli_stmt_bind_param($stmt, "s", $param_nuid);
+
+          // Set parameters
+          $param_nuid = $nuid;
+
+          // Attempt to execute the prepared statement
+          if(mysqli_stmt_execute($stmt)){
+              mysqli_stmt_store_result($stmt);
+
+              if(mysqli_stmt_num_rows($stmt) == 1){
+                  return true;
+              } else {
+                return null;
+              }
+          } else{
+              echo(json_encode(array('status' => '1', 'error' => 'Oops! Something went wrong. Please try again later.')));
+          }
+      }
+
+      // Close statement
+      mysqli_stmt_close($stmt);
+    }
+
     //this function is used to get the balance from a user using the pin and a IBAN or NUID
     function get_pin_attempts($nuid){
         require "config.php";
