@@ -23,23 +23,26 @@
               $data = checksaldo($nuid, $pin, null);
               $balance = $data['balance'];
               $iban = $data['iban'];
-
-              //chek if balance is enough to withdraw amount
-              if(isset($balance)){
-                if($amount <= $balance){
-                  //insert the new balance
-                  $new_balance = $balance - $amount;
-                  if(update_saldo($new_balance, $iban) !== null){
-                    transaction($iban, null, $amount, $location);
-                    $response = array('status' => '0', 'balance' => $new_balance); //sent amount back for conformation
-                  }else{
-                    $response = array('status' => '1', 'error' => 'Oops! Something went wrong. Please try again later.');
-                  }
+              if($amount >= 10 && $amount <= 500){
+                //chek if balance is enough to withdraw amount
+                if(isset($balance)){
+                  if($amount <= $balance){
+                    //insert the new balance
+                    $new_balance = $balance - $amount;
+                    if(update_saldo($new_balance, $iban) !== null){
+                      transaction($iban, null, $amount, $location);
+                      $response = array('status' => '0', 'balance' => $new_balance); //sent amount back for conformation
+                    }else{
+                      $response = array('status' => '1', 'error' => 'Oops! Something went wrong. Please try again later.');
+                    }
+                }else{
+                    $response = array('status' => '1', 'error' => 'Not enough funds to withdraw.');
+                }
               }else{
-                  $response = array('status' => '1', 'error' => 'Not enough funds to withdraw.');
+                  $response = array('status' => '1', 'error' => 'Card or Pin not correct.');
               }
             }else{
-                $response = array('status' => '1', 'error' => 'Card or Pin not correct.');
+                $response = array('status' => '1', 'error' => 'Withdraw amount not allowed.');
             }
           }else{
               $response = array('status' => '1', 'error' => 'Amount not entered.');
