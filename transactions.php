@@ -68,7 +68,7 @@
                       }
                       echo "</table>";
                   } else {
-                      echo "0 results";
+                      echo "Geen Afschriften<br />";
                   }
 
 
@@ -95,7 +95,7 @@
                       }
                       echo "</table>";
                   } else {
-                      echo "0 results";
+                      echo "Geen Bijschriften";
                   }
                   $link->close();
                 }else{
