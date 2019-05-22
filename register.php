@@ -111,5 +111,9 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             <p>Already have an account? <a href="index.php">Login here</a>.</p>
         </form>
     </div>
+    <footer class="container">
+      <hr>
+      <p>&copy; Monarch Douglas Bank 2018-2019</p>
+    </footer>
 </body>
 </html>
