@@ -5,11 +5,11 @@
   // Check if the user is logged in, if not then redirect him to login page
   if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
       header("location: login.php");
-      exit;
+      exit();
   }else{
     if($_SESSION["admin"] !== 1){
       header("location: home.php");
-      exit;
+      exit();
     }
   }
 
@@ -101,7 +101,6 @@
                           <th scope='col'>IBAN</th>
                           <th scope='col'>NUID</th>
                           <th scope='col'>Balance</th>
-                          <th scope='col'>Pin Attemepts</th>
                           <th scope='col'>Status</th>
                         </tr>
                       </thead><tbody>"; // start a table tag in the HTML
@@ -113,7 +112,6 @@
                                 <td>
                                     €" . $row['balance'] . "
                                 </td>
-                                <td>" . $row['pin_attempts'] ."</td>
                                 ";
                                 if($row['pin_attempts'] > 2){
                                     echo("<td>
@@ -140,13 +138,77 @@
               } else {
                   echo "<div class='center'>Error</div>";
               }
-
-              mysqli_close($link);
             ?>
           </div>
           <div class="col-sm-3"></div>
         </div>
-        <br />
+        <div class="row">
+          <div class="col-sm-3"></div>
+          <div class="col-sm-6">
+          <div class="wrapper">
+              <h2>Create a bankaccount</h2>
+              <p>Please fill this form to create a bankaccount.</p>
+              <form action="addacount.php" method="post">
+                  <div class="form-group">
+                      <label>Account *</label>
+                      <select class='form-control' name='id'>
+                        <?php
+                          $sql = "SELECT id,username FROM users";
+                          $result = mysqli_query($link, $sql);
+
+                          while($row = mysqli_fetch_array($result)){
+                                echo("<option value='" . $row['id'] . "'>" . $row['username'] . "</option>");
+                            }
+                            echo("</select>");
+                        ?>
+                    </div>
+                    <div class="form-group">
+                        <label>Pin *</label>
+                        <input type="password" maxlength="4" name="pin" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>NUID</label>
+                        <input type="text" maxlength="8" name="nuid" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" class="btn btn-primary" value="Submit">
+                    </div>
+                    <p>* is required</p>
+              </form>
+          </div>
+          <div class="col-sm-3"></div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-3"></div>
+        <div class="col-sm-6">
+          <div class="wrapper">
+              <h2>Delete a bankaccount</h2>
+              <p>Please fill this form to create a bankaccount.</p>
+              <form action='functions/deleteacc.php' method='post'><select class='form-control' name='iban'>
+                <?php
+                    //verkrijg de informatie uit de tabel
+                    $sql = "SELECT username, iban, balance FROM accounts, users WHERE accounts.id = users.id";
+                    $result = mysqli_query($link, $sql);
+
+                    while($row = mysqli_fetch_array($result)){
+                      echo("<option value='" . $row['iban'] . "'>" . $row['iban'] . " van " . $row['username'] . "</option>");
+                    }
+                    echo("</select>");
+
+                    mysqli_close($link);
+                ?>
+              <br>
+              <input type='submit' name='Delete' class='btn btn-danger btn-send' value='Delete'>
+            </form>
+          </div>
+        </div>
+        <div class="col-sm-3"></div>
+      </div>
+      <footer class="container">
+        <hr>
+        <p>&copy; Monarch Douglas Bank 2018-2019</p>
+      </footer>
       </main>
     </body>
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
