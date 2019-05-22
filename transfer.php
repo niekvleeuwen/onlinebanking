@@ -10,79 +10,97 @@
 
   // Include config file
   require_once "config.php";
+  require_once "api/functions.php";
 
   // Define variables and initialize with empty values
   $pin = $amount = $iban_sender = $iban_recipient = "";
-  $pin_err = $amount_err = $iban_recipient_err = $iban_sender_err = $stat = $err = "";
+  $stat = $err = "";
 
   // Processing form data when form is submitted
   if($_SERVER["REQUEST_METHOD"] == "POST"){
 
       // Validate iban sender
       if(empty(trim($_POST["iban_sender"]))){
-          $iban_sender_err = "Please enter a IBAN.";
+          $err = "Please enter a IBAN.";
       } else{
-        $iban_sender = $_POST['iban_sender']; //iban will be checked in api call
+        if(checkiban($_POST['iban_sender']) == null){
+            $err = "IBAN doesn't exist.";
+        }else{
+            if(strlen($_POST['iban_sender']) == 14){
+              $iban_sender = $_POST['iban_sender'];
+            }else{
+              $err = "IBAN not correct.";
+            }
+        }
       }
 
       // Validate iban recipient
       if(empty(trim($_POST["iban_recipient"]))){
-          $iban_recipient_err = "Please enter a IBAN.";
+          $err = "Please enter a IBAN.";
       } else{
-        $iban_recipient = $_POST['iban_recipient']; //iban will be checked in api call
+        if(checkiban($_POST['iban_recipient']) == null){
+            $err = "IBAN doesn't exist.";
+        }else{
+            if(strlen($_POST['iban_recipient']) == 14){
+                $iban_recipient = $_POST['iban_recipient']; //iban will be checked in api call
+            }else{
+                $err = "IBAN not correct.";
+            }
+
+        }
       }
 
       // Validate amount
       if(empty(trim($_POST["amount"]))){
-          $amount_err = "Please enter a amount.";
+        $err = "Please enter a amount.";
       } else{
         if(is_numeric($_POST["amount"])){
             $amount= trim($_POST["amount"]);
         }else{
-            $amount_err = "Please enter numbers as amount";
+          $err = "Please enter numbers as amount (use decimal point)";
         }
       }
 
       // Validate pin
       if(empty(trim($_POST["pin"]))){
-          $pin_err = "Please enter a pin.";
+          $err= "Please enter a pin.";
       } else{
           if(strlen($_POST["pin"]) == 4){
             if(is_numeric($_POST["pin"])){
                 $pin = trim($_POST["pin"]);
             }else{
-                $pin_err = "Please enter numbers as pin";
+                $err= "Please enter numbers as pin";
             }
           }else{
-                $pin_err = "Please enter a pin of 4 characters.";
+                $err= "Please enter a pin of 4 characters.";
           }
       }
-
-      require_once "api/functions.php";
       //get the users balance
       $data = checksaldo(null, $pin, $iban_sender);
       $balance_sender = $data['balance'];
 
-      if(isset($balance_sender)){
-        if($amount <= $balance_sender){ //check if the balance is sufficient to transfer the amount
-          if(update_saldo($balance_sender - $amount, $iban_sender) !== null){ //insert the new balance of the sender
-              if(add_saldo($amount, $iban_recipient) !== null){ //insert the new balance of the recipient
-                  if(transaction($iban_sender, $iban_recipient, $amount, "Online Banking") !== null){ //insert the transaction record in the database
-                    $stat = "The transfer is complete";
-                  }else{
-                    $stat = "The transfer is complete, but isn't logged! Contact customer support please.";
-                  }
-              }else{
+      if($err == ""){
+        if(isset($balance_sender)){
+          if($amount <= $balance_sender){ //check if the balance is sufficient to transfer the amount
+            if(update_saldo($balance_sender - $amount, $iban_sender) !== null){ //insert the new balance of the sender
+                if(add_saldo($amount, $iban_recipient) !== null){ //insert the new balance of the recipient
+                    if(transaction($iban_sender, $iban_recipient, $amount, "Online Banking") !== null){ //insert the transaction record in the database
+                      $stat = "The transfer is complete";
+                    }else{
+                      $stat = "The transfer is complete, but isn't logged! Contact customer support please.";
+                    }
+                }else{
+                  $err = "Oops! Something went wrong. Please try again later.";
+                }
+            }else{
                 $err = "Oops! Something went wrong. Please try again later.";
-              }
+            }
           }else{
-              $err = "Oops! Something went wrong. Please try again later.";
+            $err = "Not enough funds to withdraw.";
           }
         }else{
-          $err = "Not enough funds to withdraw.";
+            $err = "Pin not correct.";
         }
-      }else{
-          $err = "Pin not correct.";
       }
   }
 ?>
@@ -134,7 +152,7 @@
                 <h2>Transfer Money</h2>
                 <p>Please fill in this form to tranfer money.</p>
                 <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
-                        <div class="form-group <?php echo (!empty($iban_sender_err)) ? 'has-error' : ''; ?>">
+                        <div class="form-group">
                             <label>Account</label>
                             <?php
                                 echo("<select class='form-control' name='iban_sender'>");
@@ -148,22 +166,18 @@
 
                                 mysqli_close($link);
                             ?>
-                            <span class="help-block"><?php echo $iban_sender_err; ?></span>
                           </div>
-                          <div class="form-group <?php echo (!empty($iban_recipient_err)) ? 'has-error' : ''; ?>">
+                          <div class="form-group">
                               <label>IBAN Recipient</label>
                               <input type="text" name="iban_recipient" class="form-control" value="<?php echo $iban_recipient; ?>">
-                              <span class="help-block"><?php echo $iban_recipient_err; ?></span>
                           </div>
-                          <div class="form-group <?php echo (!empty($amount_err)) ? 'has-error' : ''; ?>">
+                          <div class="form-group">
                               <label>Amount</label>
                               <input type="text" maxlength="10" name="amount" class="form-control" value="<?php echo $amount; ?>">
-                              <span class="help-block"><?php echo $amount_err; ?></span>
                           </div>
-                          <div class="form-group <?php echo (!empty($pin_err)) ? 'has-error' : ''; ?>">
+                          <div class="form-group">
                               <label>PIN</label>
                               <input type="password" maxlength="4" name="pin" class="form-control" value="<?php echo $pin; ?>">
-                              <span class="help-block"><?php echo $pin_err; ?></span>
                           </div>
                           <div class="form-group">
                               <input type="submit" class="btn btn-primary" value="Submit">
