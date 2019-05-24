@@ -123,6 +123,16 @@
           return null;
       }
     }
+    function blockcard($nuid){
+      require "config.php";
+      //set pin attempts to zero
+      $sql = "UPDATE accounts SET pin_attempts = 3 WHERE nuid = '$nuid'";
+      if ($link->query($sql) === TRUE) {
+          return 1;
+      } else {
+          return null;
+      }
+    }
     function add_pin_attempt($nuid){
       require "config.php";
       $sql = "UPDATE accounts SET pin_attempts = pin_attempts + 1 WHERE nuid = '$nuid'";

@@ -15,6 +15,7 @@
 
   // Processing form data when form is submitted
   if($_SERVER["REQUEST_METHOD"] == "POST"){
+      $err = "";
       // Check if nuid is empty
       if(empty($_POST["nuid"])){
           $err = "Please enter a nuid.";
@@ -86,9 +87,10 @@
           <div class="col-sm-3"></div>
           <div class="col-sm-6">
             <?php
-              mysqli_close($link);
-              // Include config file
-              require 'config.php';
+              if(!isset($link) || $link == false){
+                // Include config file
+                require 'config.php';
+              }
 
               //Omschrijven naar een query zonder SQL injectie mogelijkheden
               $sql = "SELECT username, iban, nuid, balance, pin_attempts FROM accounts, users WHERE users.id = accounts.id";
