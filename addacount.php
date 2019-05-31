@@ -18,7 +18,7 @@
 
 
   // Include config file
-  require 'config.php';
+  require_once 'config.php';
 
   // Check if pin is empty
   if(empty($_POST["pin"])){
@@ -44,6 +44,28 @@
   }
 
   if(strlen($_POST["nuid"]) == 8){
+    // Prepare a select statement
+    $sql = "SELECT nuid FROM accounts WHERE nuid = ?";
+    if($stmt = mysqli_prepare($link, $sql)){
+        // Bind variables to the prepared statement as parameters
+        mysqli_stmt_bind_param($stmt, "s", $param_nuid);
+        // Set parameters
+        $param_nuid = trim($_POST["nuid"]);
+        // Attempt to execute the prepared statement
+        if(mysqli_stmt_execute($stmt)){
+            /* store result */
+            mysqli_stmt_store_result($stmt);
+            if(mysqli_stmt_num_rows($stmt) == 1){
+                $err = "This nuid is already taken.";
+            } else{
+                $nuid = $_POST["nuid"];
+            }
+        } else{
+            $err =  "Oops! Something went wrong. Please try again later.";
+        }
+    }
+    // Close statement
+    mysqli_stmt_close($stmt);
     $nuid = $_POST["nuid"];
   }else if(strlen($_POST["nuid"] > 0)){
     $err = "NUID not correct";
@@ -53,18 +75,30 @@
 
   if(!$err){
     include 'functions/iban_generator.php';
-    $iban = ibanGenerator("MD", "USSR"); //generate a IBAN
-
-    require "config.php";
-    $sql = "INSERT INTO accounts (id, iban, nuid, pin) VALUES ($id, '$iban', '$nuid', '$pin')";
-
-    if ($link->query($sql) === TRUE) {
-        $stat = "The account has been created. The IBAN is " . $iban . "";
-    }else{
-        $err = "Oops! Something went wrong. Please try again later.";
+    // Prepare an insert statement
+    $sql = "INSERT INTO accounts (id, iban, nuid, pin) VALUES (?, ?, ?, ?)";
+    if($stmt = mysqli_prepare($link, $sql)){
+        // Bind variables to the prepared statement as parameters
+        mysqli_stmt_bind_param($stmt, "isss", $param_id, $param_iban, $param_nuid, $param_pin);
+        // Set parameters
+        $param_id = $id;
+        $param_iban = ibanGenerator("MD", "USSR"); //generate a IBAN
+        $param_nuid = $nuid;
+        $param_pin = password_hash($pin, PASSWORD_DEFAULT); // Creates a password hash
+        // Attempt to execute the prepared statement
+        if(mysqli_stmt_execute($stmt)){
+            $stat = "The account has been created. The IBAN is " . $param_iban . "";
+        } else{
+            $err = "Oops! Something went wrong. Please try again later. ";
+            echo "Prepared Statement Error: " . $link->error;
+        }
     }
-    $link->close();
+    // Close statement
+    mysqli_stmt_close($stmt);
   }
+
+  // Close connection
+  mysqli_close($link);
 ?>
 <!DOCTYPE html>
 <html lang="en">
