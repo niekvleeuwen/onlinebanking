@@ -35,7 +35,7 @@
                   ". $stat . "
                 </div>");
               }
-
+              require_once 'config.php';
               //Omschrijven naar een query zonder SQL injectie mogelijkheden
               $sql = "SELECT iban, balance FROM accounts WHERE id IN (SELECT id FROM users WHERE id = '" . $_SESSION['id'] . "') ";
               $result = mysqli_query($link, $sql);
