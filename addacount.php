@@ -61,7 +61,7 @@
                 $nuid = $_POST["nuid"];
             }
         } else{
-            $err =  "Oops! Something went wrong. Please try again later.";
+            $err =  "Oops! Something went wrong. Please try again later. 1";
         }
     }
     // Close statement
@@ -82,7 +82,7 @@
         mysqli_stmt_bind_param($stmt, "isss", $param_id, $param_iban, $param_nuid, $param_pin);
         // Set parameters
         $param_id = $id;
-        $param_iban = ibanGenerator("MD", "USSR"); //generate a IBAN
+        $param_iban = ibanGenerator("MD", "MODO"); //generate a IBAN
         $param_nuid = $nuid;
         $param_pin = password_hash($pin, PASSWORD_DEFAULT); // Creates a password hash
         // Attempt to execute the prepared statement
