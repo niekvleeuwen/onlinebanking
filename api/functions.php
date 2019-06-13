@@ -88,7 +88,7 @@
               if(mysqli_stmt_num_rows($stmt) == 1){
                   return true;
               } else {
-                return null;
+                return false;
               }
           } else{
               echo(json_encode(array('status' => '1', 'error' => 'Oops! Something went wrong. Please try again later.')));
@@ -237,6 +237,21 @@
     function atm($ten, $twenty, $fifty, $atm_id){
       require "config.php";
       $sql = "UPDATE atm SET bill_10 = bill_10 + $ten, bill_20 = bill_20 + $twenty,bill_50 = bill_50 + $fifty WHERE atm_id = $atm_id";
+      if ($link->query($sql) === TRUE) {
+          return true;
+      } else {
+          return false;
+      }
+    }
+
+    function remote_transaction($bank_code, $acc_number, $pin, $amount){
+      require "config.php";
+      //this is what the noob bank expects
+      //["ABNA", "withdraw", 300400, 1234, 199.50]
+
+      $command = "[\"" . $bank_code  . "\", \"withdraw\", " . $acc_number .", " . $pin . ", " . $amount . "]";
+      $sql = "INSERT INTO noob (command) VALUES ('$command')";
+
       if ($link->query($sql) === TRUE) {
           return true;
       } else {
