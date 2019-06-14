@@ -76,7 +76,7 @@
           }
       }
       //get the users balance
-      $data = checksaldo(null, $pin, $iban_sender);
+      $data = checksaldo($pin, $iban_sender);
       $balance_sender = $data['balance'];
 
       if($err == ""){

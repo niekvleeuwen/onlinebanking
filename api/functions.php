@@ -34,34 +34,21 @@
     }
 
     //this function is used to get the balance from a user using the pin and a IBAN or NUID
-    function checksaldo($nuid, $pin, $iban){
+    function checksaldo($pin, $iban){
         require "config.php";
         //prepare and bind
-        if(isset($iban)){
-          //check balance with iban (with pin verification)
-          $pin_attempts = checkpin_iban($iban, $pin); //check if the pin is correct
-          if(isset($pin_attempts)){
-            $stmt = $link->prepare("SELECT balance, iban FROM accounts WHERE iban = ?");
-            $stmt->bind_param("s", $param_iban);
-            $param_iban = $iban;
-          }else{
-            echo(json_encode(array('status' => '1', 'error' => 'Pin is not correct')));
-            exit();
-          }
+
+        //check balance with iban (with pin verification)
+        $pin_attempts = checkpin($iban, $pin); //check if the pin is correct
+        if(isset($pin_attempts)){
+          $stmt = $link->prepare("SELECT balance, iban FROM accounts WHERE iban = ?");
+          $stmt->bind_param("s", $param_iban);
+          $param_iban = $iban;
         }else{
-          //check balance with iban (with pin verification)
-          $pin_attempts = checkpin($nuid, $pin); //check if the pin is correct
-          if(isset($pin_attempts)){
-            //check balance with nuid and pin
-            $stmt = $link->prepare("SELECT balance, iban FROM accounts WHERE nuid = ?");
-            $stmt->bind_param("s", $param_nuid);
-            // set parameters and execute
-            $param_nuid = $nuid;
-          }else{
-            echo(json_encode(array('status' => '1', 'error' => 'Pin is not correct')));
-            exit();
-          }
+          echo(json_encode(array('status' => '1', 'error' => 'Pin is not correct')));
+          exit();
         }
+
         if (!$stmt->execute()) {
             echo(json_encode(array('status' => '1', 'error' => 'Oops! Something went wrong. Please try again later.')));
             exit();
@@ -98,12 +85,12 @@
       mysqli_stmt_close($stmt);
     }
 
-    //this function is used to get the balance from a user using the pin and a IBAN or NUID
-    function get_pin_attempts($nuid){
+    //this function is used to get the balance from a user using the pin and a IBAN
+    function get_pin_attempts($iban){
         require "config.php";
-        $stmt = $link->prepare("SELECT pin_attempts FROM accounts WHERE nuid = ?");
-        $stmt->bind_param("s", $param_nuid);
-        $param_nuid = $nuid;
+        $stmt = $link->prepare("SELECT pin_attempts FROM accounts WHERE iban = ?");
+        $stmt->bind_param("s", $param_iban);
+        $param_iban = $iban;
         if (!$stmt->execute()) {
             echo(json_encode(array('status' => '1', 'error' => 'Oops! Something went wrong. Please try again later.')));
             exit();
@@ -114,29 +101,8 @@
         return $pin_attempts;
     }
 
-    //this function is used to check a pin
-    function checkpin($nuid, $pin){
-      require "config.php";
-      //check pin
-      $stmt = $link->prepare("SELECT pin, pin_attempts FROM accounts WHERE nuid = ?");
-      $stmt->bind_param("s", $param_nuid);
-      $param_nuid = $nuid;
-      if (!$stmt->execute()) {
-          echo(json_encode(array('status' => '1', 'error' => 'Oops! Something went wrong. Please try again later.')));
-          exit();
-      }
-      $stmt->bind_result($pin_hash, $pin_attempts);
-      $stmt->fetch();
-      $stmt->close();
-      if(password_verify($pin, $pin_hash)){
-        return $pin_attempts;
-      }else{
-        return null;
-      }
-    }
-
     //this function is used to check a pin with a iban
-    function checkpin_iban($iban, $pin){
+    function checkpin($iban, $pin){
       require "config.php";
       //check pin
       $stmt = $link->prepare("SELECT pin, pin_attempts FROM accounts WHERE iban = ?");
@@ -157,10 +123,10 @@
     }
 
     //this function resets the pin attempts
-    function reset_pin_attempts($nuid){
+    function reset_pin_attempts($iban){
       require "config.php";
       //set pin attempts to zero
-      $sql = "UPDATE accounts SET pin_attempts = 0 WHERE nuid = '$nuid'";
+      $sql = "UPDATE accounts SET pin_attempts = 0 WHERE iban = '$iban'";
       if ($link->query($sql) === TRUE) {
           return 1;
       } else {
@@ -169,10 +135,10 @@
     }
 
     //this function blocks the card
-    function blockcard($nuid){
+    function blockcard($iban){
       require "config.php";
       //set pin attempts to zero
-      $sql = "UPDATE accounts SET pin_attempts = 3 WHERE nuid = '$nuid'";
+      $sql = "UPDATE accounts SET pin_attempts = 3 WHERE iban = '$iban'";
       if ($link->query($sql) === TRUE) {
           return 1;
       } else {
@@ -181,9 +147,9 @@
     }
 
     //this function adds 1 pin attempt
-    function add_pin_attempt($nuid){
+    function add_pin_attempt($iban){
       require "config.php";
-      $sql = "UPDATE accounts SET pin_attempts = pin_attempts + 1 WHERE nuid = '$nuid'";
+      $sql = "UPDATE accounts SET pin_attempts = pin_attempts + 1 WHERE iban = '$iban'";
       if ($link->query($sql) === TRUE) {
           return 1;
       } else {
@@ -247,7 +213,7 @@
     function remote_transaction($bank_code, $acc_number, $pin, $amount){
       require "config.php";
       //this is what the noob bank expects
-      //["ABNA", "withdraw", 300400, 1234, 199.50]
+      //['uvvu', '{"IDRecBank":"uvvu","IDSenBank":"coba","Func":"withdraw","IBAN":"SUXXUVVUXXXXXX","PIN":"XXXX","amount":"XX"}']
 
       $command = "[\"" . $bank_code  . "\", \"withdraw\", " . $acc_number .", " . $pin . ", " . $amount . "]";
       $sql = "INSERT INTO noob (command) VALUES ('$command')";

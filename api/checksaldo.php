@@ -1,15 +1,15 @@
 <?php
     header('Content-Type: application/json');
-    $nuid_length = 8;
+    $iban_length = 14;
     $pin_length = 4;
 
-    $nuid = str_replace(' ', '', htmlspecialchars($_POST['nuid'])); //remove whitespaces
+    $iban = str_replace(' ', '', htmlspecialchars($_POST['iban'])); //remove whitespaces
     $pin = str_replace(' ', '', htmlspecialchars($_POST['pin'])); //remove whitespaces
 
-    if(isset($nuid) && strlen($nuid) == $nuid_length){
+    if(isset($iban) && strlen($iban) == $iban_length){
         if(isset($pin) && strlen($pin) == $pin_length){
             require_once "functions.php";
-            $data = checksaldo($nuid, $pin, null);
+            $data = checksaldo($pin, $iban);
             $balance = $data['balance'];
             if(isset($balance)){
                 $response = array('status' => '0', 'balance' => $balance);
@@ -20,7 +20,7 @@
             $response = array('status' => '1', 'error' => 'PIN not entered or correct.');
         }
     }else{
-        $response = array('status' => '1', 'error' => 'NUID not entered or correct.');
+        $response = array('status' => '1', 'error' => 'Iban not entered or correct.');
     }
 
     echo(json_encode($response));

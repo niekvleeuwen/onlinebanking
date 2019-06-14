@@ -3,11 +3,11 @@
 
     require_once "../config.php";
 
-    $nuid_length = 8;
+    $iban_length = 8;
     $pin_length = 4;
     $iban_length = 14;
 
-    $nuid = str_replace(' ', '', htmlspecialchars($_POST['nuid'])); //remove whitespaces
+    $iban = str_replace(' ', '', htmlspecialchars($_POST['iban'])); //remove whitespaces
     $pin = str_replace(' ', '', htmlspecialchars($_POST['pin'])); //remove whitespaces
     $amount = htmlspecialchars($_POST['amount']);
     $iban_recipient = htmlspecialchars($_POST['iban_recipient']);
@@ -19,15 +19,15 @@
         $location = "Unkown";
     }
 
-    if(isset($nuid) && strlen($nuid) == $nuid_length){
+    if(isset($iban) && strlen($iban) == $iban_length){
         if(isset($pin) && strlen($pin) == $pin_length){
           if(isset($iban_recipient) && strlen($iban_recipient) == $iban_length){
             include_once "functions.php";
             //Check if the IBAN is valid
             if(checkiban($iban_recipient) !== null){
               if(isset($amount)){
-                  //if the user hasn't sent iban_sender as a parameter we use the nuid and pin
-                  $data = checksaldo($nuid, $pin, null);
+                  //if the user hasn't sent iban_sender as a parameter we use the iban and pin
+                  $data = checksaldo($iban, $pin);
                   $balance_sender = $data['balance'];
                   $iban_sender = $data['iban'];
                   //chek if balance is enough to withdraw amount
@@ -63,7 +63,7 @@
             $response = array('status' => '1', 'error' => 'PIN not entered or correct.');
         }
     }else{
-        $response = array('status' => '1', 'error' => 'NUID not entered or correct.');
+        $response = array('status' => '1', 'error' => 'Iban not entered or correct.');
     }
 
     //close connection

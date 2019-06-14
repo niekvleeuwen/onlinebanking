@@ -1,20 +1,20 @@
 <?php
     header('Content-Type: application/json');
-    $nuid_length = 8;
+    $iban_length = 14;
     $pin_length = 4;
 
-    $nuid = str_replace(' ', '', htmlspecialchars($_POST['nuid'])); //remove whitespaces
+    $iban = str_replace(' ', '', htmlspecialchars($_POST['iban'])); //remove whitespaces
     $pin = str_replace(' ', '', htmlspecialchars($_POST['pin'])); //remove whitespaces
 
-    if(isset($nuid) && strlen($nuid) == $nuid_length){
+    if(isset($iban) && strlen($iban) == $iban_length){
         if(isset($pin) && strlen($pin) == $pin_length){
             require_once "functions.php";
-            $pin_attempts = checkpin($nuid, $pin); //check if the pin is correct
+            $pin_attempts = checkpin($iban, $pin); //check if the pin is correct
             if(isset($pin_attempts)){
                 if($pin_attempts < 3){ //check if the card is blocked
                   //if the pin is correct, reset the pin attempts if the value is greater than 0
                   if($pin_attempts > 0){
-                    reset_pin_attempts($nuid);
+                    reset_pin_attempts($iban);
                   }
                   $response = array('status' => '0');
                 }else{
@@ -36,7 +36,7 @@
             $response = array('status' => '1', 'error' => 'PIN not entered or 4 digits.');
         }
     }else{
-        $response = array('status' => '1', 'error' => 'NUID not entered or 8 digits.');
+        $response = array('status' => '1', 'error' => 'IBAN not entered or 14 digits.');
     }
 
     echo(json_encode($response));

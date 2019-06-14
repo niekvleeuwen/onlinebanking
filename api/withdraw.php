@@ -3,10 +3,10 @@
 
     require_once "../config.php";
 
-    $nuid_length = 8;
+    $iban_length = 14;
     $pin_length = 4;
 
-    $nuid = str_replace(' ', '', htmlspecialchars($_POST['nuid'])); //remove whitespaces
+    $iban = str_replace(' ', '', htmlspecialchars($_POST['iban'])); //remove whitespaces
     $pin = str_replace(' ', '', htmlspecialchars($_POST['pin'])); //remove whitespaces
     $amount = htmlspecialchars($_POST['amount']);
     $location = htmlspecialchars($_POST['location']);
@@ -15,35 +15,51 @@
         $location = "Unkown";
     }
 
-    if(isset($nuid) && strlen($nuid) == $nuid_length){
+    if(isset($iban) && strlen($iban) == $iban_length){
         if(isset($pin) && strlen($pin) == $pin_length){
-          if(isset($amount)){
+          if(isset($amount) && $amount > 0){
               require_once "../api/functions.php";
-              //first get the balance and iban from the sender
-              $data = checksaldo($nuid, $pin, null);
-              $balance = $data['balance'];
-              $iban = $data['iban'];
-              if($amount >= 10 && $amount <= 500){
-                //chek if balance is enough to withdraw amount
-                if(isset($balance)){
-                  if($amount <= $balance){
-                    //insert the new balance
-                    $new_balance = $balance - $amount;
-                    if(update_saldo($new_balance, $iban) !== null){
-                      transaction($iban, null, $amount, $location);
-                      $response = array('status' => '0', 'balance' => $new_balance); //sent amount back for conformation
+              //first get the target bank code
+              $bank_code = substr($iban, 4, 4);
+
+              if($bank_code == "MODO"){
+                //lokale bank
+                //first get the balance and iban from the sender
+                $data = checksaldo($pin, $iban);
+                $balance = $data['balance'];
+                $iban = $data['iban'];
+                if($amount >= 10 && $amount <= 500){
+                  //chek if balance is enough to withdraw amount
+                  if(isset($balance)){
+                    if($amount <= $balance){
+                      //insert the new balance
+                      $new_balance = $balance - $amount;
+                      if(update_saldo($new_balance, $iban) !== null){
+                        transaction($iban, null, $amount, $location);
+                        $response = array('status' => '0', 'balance' => $new_balance); //sent amount back for conformation
+                      }else{
+                        $response = array('status' => '1', 'error' => 'Oops! Something went wrong. Please try again later.');
+                      }
                     }else{
-                      $response = array('status' => '1', 'error' => 'Oops! Something went wrong. Please try again later.');
+                      $response = array('status' => '1', 'error' => 'Not enough funds to withdraw.');
                     }
+                  }else{
+                    $response = array('status' => '1', 'error' => 'Card or Pin not correct.');
+                  }
                 }else{
-                    $response = array('status' => '1', 'error' => 'Not enough funds to withdraw.');
+                  $response = array('status' => '1', 'error' => 'Withdraw amount not allowed.');
                 }
               }else{
-                  $response = array('status' => '1', 'error' => 'Card or Pin not correct.');
+                //external bank
+                //get the target account number
+                $acc_number = substr($iban, 8, 14);
+
+                if(remote_transaction($bank_code, $acc_number, $pin, $amount) == true){
+                  $response = array('status' => '0');
+                }else{
+                  $response = array('status' => '1', 'error' => 'Oops! Something went wrong. Please try again later.');
+                }
               }
-            }else{
-                $response = array('status' => '1', 'error' => 'Withdraw amount not allowed.');
-            }
           }else{
               $response = array('status' => '1', 'error' => 'Amount not entered.');
           }
@@ -51,7 +67,7 @@
             $response = array('status' => '1', 'error' => 'PIN not entered or correct.');
         }
     }else{
-        $response = array('status' => '1', 'error' => 'NUID not entered or correct.');
+        $response = array('status' => '1', 'error' => 'IBAN not entered or correct.');
     }
 
     //close connection
