@@ -68,18 +68,21 @@
           if(strlen($_POST["pin"]) == 4){
             if(is_numeric($_POST["pin"])){
                 $pin = trim($_POST["pin"]);
+                if(checkpin($iban_sender, $pin) == null){
+                  $err = "Pin not correct.";
+                }
             }else{
-                $err= "Please enter numbers as pin";
+                $err = "Please enter numbers as pin";
             }
           }else{
-                $err= "Please enter a pin of 4 characters.";
+                $err = "Please enter a pin of 4 characters.";
           }
       }
-      //get the users balance
-      $data = checksaldo($pin, $iban_sender);
-      $balance_sender = $data['balance'];
 
       if($err == ""){
+        //get the users balance
+        $data = checksaldo($pin, $iban_sender);
+        $balance_sender = $data['balance'];
         if(isset($balance_sender)){
           if($amount <= $balance_sender){ //check if the balance is sufficient to transfer the amount
             if(update_saldo($balance_sender - $amount, $iban_sender) !== null){ //insert the new balance of the sender
