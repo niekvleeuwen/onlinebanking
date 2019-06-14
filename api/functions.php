@@ -210,12 +210,12 @@
       }
     }
 
-    function remote_transaction($bank_code, $acc_number, $pin, $amount){
+    function remote_transaction($bank_code, $iban, $pin, $amount){
       require "config.php";
       //this is what the noob bank expects
-      //['uvvu', '{"IDRecBank":"uvvu","IDSenBank":"coba","Func":"withdraw","IBAN":"SUXXUVVUXXXXXX","PIN":"XXXX","amount":"XX"}']
+      //['modo', '{"IDRecBank":"modo","IDSenBank":"coba","Func":"withdraw","IBAN":"SUXXUVVUXXXXXX","PIN":"XXXX","amount":"XX"}']
+      $command = "{\"IDRecBank\":\"" . $bank_code .  "\",\"IDSenBank\":\"modo\",\"Func\":\"withdraw\",\"IBAN\":\"" . $iban . "\",\"PIN\":\"" . $pin . "\",\"amount\":\"" . $amount . "\"}";
 
-      $command = "[\"" . $bank_code  . "\", \"withdraw\", " . $acc_number .", " . $pin . ", " . $amount . "]";
       $sql = "INSERT INTO noob (command) VALUES ('$command')";
 
       if ($link->query($sql) === TRUE) {
