@@ -242,4 +242,19 @@
           return false;
       }
     }
+
+    function getbills(){
+      require "config.php";
+      $stmt = $link->prepare("SELECT bill_10, bill_20, bill_50 FROM atm");
+
+      if (!$stmt->execute()) {
+          echo(json_encode(array('status' => '1', 'error' => 'Oops! Something went wrong. Please try again later.')));
+          exit();
+      }
+
+      $stmt->bind_result($bill_10, $bill_20, $bill_50);
+      $stmt->fetch();
+      $stmt->close();
+      return array('bill_10' => $bill_10, 'bill_20' => $bill_20, 'bill_50' => $bill_50 );
+    }
 ?>
