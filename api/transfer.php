@@ -3,7 +3,6 @@
 
     require_once "../config.php";
 
-    $iban_length = 8;
     $pin_length = 4;
     $iban_length = 14;
 
@@ -26,7 +25,6 @@
             //Check if the IBAN is valid
             if(checkiban($iban_recipient) !== null){
               if(isset($amount)){
-                  //if the user hasn't sent iban_sender as a parameter we use the iban and pin
                   $data = checksaldo($iban, $pin);
                   $balance_sender = $data['balance'];
                   $iban_sender = $data['iban'];
@@ -51,19 +49,19 @@
                     $response = array('status' => '1', 'error' => 'Card or Pin not correct.');
                 }
               }else{
-                  $response = array('status' => '1', 'error' => 'Iban not entered or correct.');
+                  $response = array('status' => '1', 'error' => 'Amount not entered or correct.');
               }
             }else{
               $response = array('status' => '1', 'error' => 'Iban not recognised.');
             }
           }else{
-              $response = array('status' => '1', 'error' => 'Iban not entered or correct.');
+              $response = array('status' => '1', 'error' => 'IBAN recipient not entered or correct.');
           }
         }else{
             $response = array('status' => '1', 'error' => 'PIN not entered or correct.');
         }
     }else{
-        $response = array('status' => '1', 'error' => 'Iban not entered or correct.');
+        $response = array('status' => '1', 'error' => 'IBAN not entered or correct.');
     }
 
     //close connection
