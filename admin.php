@@ -17,10 +17,10 @@
   if($_SERVER["REQUEST_METHOD"] == "POST"){
       $err = "";
       // Check if nuid is empty
-      if(empty($_POST["nuid"])){
-          $err = "Please enter a nuid.";
+      if(empty($_POST["iban"])){
+          $err = "Please enter an IBAN.";
       } else{
-          $nuid = $_POST["nuid"];
+          $iban = $_POST["iban"];
       }
 
       $status = $_POST["status"];
@@ -28,13 +28,13 @@
       if(!$err){
         require 'api/functions.php';
         if($status == 1){
-          if(blockcard($nuid) == 1){
+          if(blockcard($iban) == 1){
               $stat = "Gelukt!";
           }else{
             $err = 'Oops! Something went wrong. Please try again later.';
           }
         }else if($status == 0){
-          if(reset_pin_attempts($nuid) == 1){
+          if(reset_pin_attempts($iban) == 1){
               $stat = "Gelukt!";
           }else{
             $err = 'Status not entered or 1 digit.';
@@ -118,7 +118,7 @@
                                 if($row['pin_attempts'] > 2){
                                     echo("<td>
                                             <form action='' method='POST'>
-                                                  <input type='hidden' name='nuid' value='" . $row['nuid'] ."'>
+                                                  <input type='hidden' name='iban' value='" . $row['iban'] ."'>
                                                   <input type='hidden' name='status' value=0>
                                                   <input class='btn btn-danger' type='submit' value='unblock >>'>
                                             </form>
@@ -127,7 +127,7 @@
                                 }else{
                                   echo("<td>
                                           <form action='' method='POST'>
-                                                <input type='hidden' name='nuid' value='" . $row['nuid'] ."'>
+                                                <input type='hidden' name='iban' value='" . $row['iban'] ."'>
                                                 <input type='hidden' name='status' value=1>
                                                 <input class='btn btn-primary' type='submit' value='block >>'>
                                           </form>
