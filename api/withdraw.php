@@ -9,10 +9,11 @@
     $iban = str_replace(' ', '', htmlspecialchars($_POST['iban'])); //remove whitespaces
     $pin = str_replace(' ', '', htmlspecialchars($_POST['pin'])); //remove whitespaces
     $amount = htmlspecialchars($_POST['amount']);
-    $location = htmlspecialchars($_POST['location']);
     //check if a location is available, otherwise set the location to unkown
-    if(!isset($location)){
-        $location = "Unkown";
+    if(isset($_POST['location'])){
+      $location = $_POST['location'];
+    }else{
+      $location = "ATM";
     }
 
     if(isset($iban) && strlen($iban) == $iban_length){
@@ -51,10 +52,7 @@
                 }
               }else{
                 //external bank
-                //get the target account number
-                $acc_number = substr($iban, 8, 14);
-
-                if(remote_transaction($bank_code, $acc_number, $pin, $amount) == true){
+                if(remote_transaction($bank_code, $iban, $pin, $amount) == true){
                   $response = array('status' => '0');
                 }else{
                   $response = array('status' => '1', 'error' => 'Oops! Something went wrong. Please try again later.');
