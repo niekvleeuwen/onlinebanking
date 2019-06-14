@@ -26,8 +26,8 @@
                     $response = array('status' => '1', 'error' => 'Card is blocked.');
                   }
               }else{
-                  if(add_pin_attempt($nuid) !== null){ //add the pin attempt to the database
-                    $current_pin_attempts = get_pin_attempts($nuid);
+                  if(add_pin_attempt($iban) !== null){ //add the pin attempt to the database
+                    $current_pin_attempts = get_pin_attempts($iban);
                     if($current_pin_attempts < 3){ //check if the card is blocked or the user tries to
                         $response = array('status' => '1', 'error' => 'Pin not correct.', 'pin_attempts' =>   $current_pin_attempts);
                     }else{
