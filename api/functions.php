@@ -1,4 +1,7 @@
 <?php
+
+    ini_set('display_errors', 'On');
+    error_reporting(E_ALL);
     //this function is used to update the saldo of the iban to the balance given as paramater
     function update_saldo($balance, $iban){
         require "config.php";
@@ -214,7 +217,22 @@
       require "config.php";
       //this is what the noob bank expects
       //['modo', '{"IDRecBank":"modo","IDSenBank":"coba","Func":"withdraw","IBAN":"SUXXUVVUXXXXXX","PIN":"XXXX","amount":"XX"}']
-      $command = "{\"IDRecBank\":\"" . $bank_code .  "\",\"IDSenBank\":\"modo\",\"Func\":\"withdraw\",\"IBAN\":\"" . $iban . "\",\"PIN\":\"" . $pin . "\",\"amount\":\"" . $amount . "\"}";
+      $command = "{\"IDRecBank\":\"modo\",\"IDSenBank\":\"" . $bank_code .  "\",\"Func\":\"withdraw\",\"IBAN\":\"" . $iban . "\",\"PIN\":\"" . $pin . "\",\"amount\":\"" . $amount . "\"}";
+
+      $sql = "INSERT INTO noob (command) VALUES ('$command')";
+
+      if ($link->query($sql) === TRUE) {
+          return true;
+      } else {
+          return false;
+      }
+    }
+
+    function remote_checkpin($bank_code, $iban, $pin){
+      require "config.php";
+      //this is what the noob bank expects
+      //['modo', '{"IDRecBank":"modo","IDSenBank":"coba","Func":"withdraw","IBAN":"SUXXUVVUXXXXXX","PIN":"XXXX"']
+      $command = "{\"IDRecBank\":\"modo\",\"IDSenBank\":\"" . $bank_code .  "\",\"Func\":\"pinCheck\",\"IBAN\":\"" . $iban . "\",\"PIN\":\"" . $pin . "\"}";
 
       $sql = "INSERT INTO noob (command) VALUES ('$command')";
 
