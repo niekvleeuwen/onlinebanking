@@ -205,7 +205,7 @@
 
     function atm($ten, $twenty, $fifty, $atm_id){
       require "config.php";
-      $sql = "UPDATE atm SET bill_10 = bill_10 + $ten, bill_20 = bill_20 + $twenty,bill_50 = bill_50 + $fifty WHERE atm_id = $atm_id";
+      $sql = "UPDATE atm SET bill_10 = bill_10 - $ten, bill_20 = bill_20 - $twenty,bill_50 = bill_50 - $fifty WHERE atm_id = $atm_id";
       if ($link->query($sql) === TRUE) {
           return true;
       } else {
