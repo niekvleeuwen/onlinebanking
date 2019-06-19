@@ -3,10 +3,10 @@
 
     require_once "../config.php";
 
-    $ten_length = 1;
-    $twenty_length = 1;
-    $fifty_length = 1;
-    $atm_id_length = 1;
+    $ten_length = 2;
+    $twenty_length = 2;
+    $fifty_length = 2;
+    $atm_id_length = 2;
 
     $ten = str_replace(' ', '', htmlspecialchars($_POST['ten'])); //remove whitespaces
     $twenty = str_replace(' ', '', htmlspecialchars($_POST['twenty'])); //remove whitespaces
