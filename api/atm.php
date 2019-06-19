@@ -6,16 +6,16 @@
     $ten_length = 2;
     $twenty_length = 2;
     $fifty_length = 2;
-    $atm_id_length = 2;
+    $atm_id_length = 1;
 
     $ten = str_replace(' ', '', htmlspecialchars($_POST['ten'])); //remove whitespaces
     $twenty = str_replace(' ', '', htmlspecialchars($_POST['twenty'])); //remove whitespaces
     $fifty = htmlspecialchars($_POST['fifty']);
     $atm_id = htmlspecialchars($_POST['atm_id']);
 
-    if(isset($ten) && strlen($ten) == $ten_length){
-        if(isset($twenty) && strlen($twenty) == $twenty_length){
-          if(isset($fifty) && strlen($fifty) == $fifty_length){
+    if(isset($ten) && strlen($ten) <= $ten_length){
+        if(isset($twenty) && strlen($twenty) <= $twenty_length){
+          if(isset($fifty) && strlen($fifty) <= $fifty_length){
             if(isset($atm_id) && strlen($atm_id) == $atm_id_length){
               require_once "functions.php";
               if(atm($ten, $twenty, $fifty, $atm_id) === true){
