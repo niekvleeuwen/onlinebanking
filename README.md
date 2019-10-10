@@ -1,5 +1,5 @@
 # Online Banking
-Online banking system for use in Project 3/4.
+For my project in the first year I developed a banking system in a group of four. In addition to the basic requirements, I developed an online banking system. I learned a lot about the development of full-stack applications and the security behind these systems.
 
 ## How to build
 
